@@ -1,12 +1,13 @@
-package entity
+package fornecedores
 
 import (
 	"errors"
 
-	. "github.com/eltonCasacio/controle-estoque/src/domain/value-objects"
+	. "github.com/eltonCasacio/controle-estoque/src/domain/fornecedores/value-object"
 )
 
 type FornecedorInterface interface {
+	GetId() string
 	IsValid() (bool, error)
 	Ativar() error
 	Desativar() error
@@ -21,61 +22,62 @@ type FornecedorInterface interface {
 }
 
 type fornecedor struct {
+	id                string
 	razaoSocial       string
 	nomeFantasia      string
 	cnpj              string
 	inscricaoEstadual string
 	endereco          Endereco
-	ativo             bool
 	contatos          []Contato
-	pecas             []Peca
+	idPecas           []string
+	ativo             bool
 }
 
 func NovoFornecedor(
 	nomeFantasia string,
 	endereco Endereco,
 	contatos []Contato,
-	pecas []Peca,
+	idPecas []string,
 ) *fornecedor {
 	return &fornecedor{
 		nomeFantasia: nomeFantasia,
 		endereco:     endereco,
 		contatos:     contatos,
-		pecas:        pecas,
+		idPecas:      idPecas,
 		ativo:        true,
 	}
 }
 
 func (f *fornecedor) IsValid() (bool, error) {
 	if len(f.contatos) == 0 {
-		return false, errors.New("Contato invalido")
+		return false, errors.New("contato invalido")
 	}
 
 	if f.nomeFantasia == "" {
-		return false, errors.New("Nome invalido")
+		return false, errors.New("nome invalido")
 	}
 	return true, nil
 }
 
 func (f *fornecedor) AtualizarContato(contatos []Contato) error {
 	if len(contatos) == 0 {
-		return errors.New("É obrigatorio pelo menos um contato")
+		return errors.New("é obrigatorio pelo menos um contato")
 	}
 	f.contatos = contatos
 	return nil
 }
 
-func (f *fornecedor) AtualizarPecas(pecas []Peca) error {
-	if len(pecas) == 0 {
-		return errors.New("É obrigatorio pelo menos uma peça")
+func (f *fornecedor) AtualizarPecas(idPecas []string) error {
+	if len(idPecas) == 0 {
+		return errors.New("é obrigatorio pelo menos uma peça")
 	}
-	f.pecas = pecas
+	f.idPecas = idPecas
 	return nil
 }
 
 func (f *fornecedor) AtualizarEndereco(endereco Endereco) error {
 	if len(endereco.Endereco) == 0 {
-		return errors.New("Endereço é obrigatorio")
+		return errors.New("endereço é obrigatorio")
 	}
 	f.endereco = endereco
 	return nil
@@ -117,4 +119,8 @@ func (f *fornecedor) Endereco() Endereco {
 
 func (f *fornecedor) Contatos() []Contato {
 	return f.contatos
+}
+
+func (f *fornecedor) GetId() string {
+	return f.id
 }

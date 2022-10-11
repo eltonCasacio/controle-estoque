@@ -1,4 +1,4 @@
-package valueobjects
+package fornecedores
 
 type Endereco struct {
 	Cidade      string
