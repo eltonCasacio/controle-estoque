@@ -3,20 +3,18 @@ package fornecedores
 import (
 	"errors"
 
-	. "github.com/eltonCasacio/controle-estoque/src/domain/fornecedores/value-object"
+	valueObject "github.com/eltonCasacio/controle-estoque/src/domain/fornecedore/value-object"
 )
 
 type FornecedorInterface interface {
-	GetId() string
-	IsValid() (bool, error)
 	Ativar() error
 	Desativar() error
 	RazaoSocial() string
 	Cnpj() string
 	InscricaoEstadual() string
 	NomeFantasia() string
-	Contato() Contato
-	Endereco() Endereco
+	Contato() valueObject.Contato
+	Endereco() valueObject.Endereco
 	AtualizarContato() error
 	AtualizarPecas() error
 }
@@ -27,16 +25,16 @@ type fornecedor struct {
 	nomeFantasia      string
 	cnpj              string
 	inscricaoEstadual string
-	endereco          Endereco
-	contatos          []Contato
+	endereco          valueObject.Endereco
+	contatos          []valueObject.Contato
 	idPecas           []string
 	ativo             bool
 }
 
 func NovoFornecedor(
 	nomeFantasia string,
-	endereco Endereco,
-	contatos []Contato,
+	endereco valueObject.Endereco,
+	contatos []valueObject.Contato,
 	idPecas []string,
 ) *fornecedor {
 	return &fornecedor{
@@ -59,7 +57,7 @@ func (f *fornecedor) IsValid() (bool, error) {
 	return true, nil
 }
 
-func (f *fornecedor) AtualizarContato(contatos []Contato) error {
+func (f *fornecedor) AtualizarContato(contatos []valueObject.Contato) error {
 	if len(contatos) == 0 {
 		return errors.New("é obrigatorio pelo menos um contato")
 	}
@@ -75,7 +73,7 @@ func (f *fornecedor) AtualizarPecas(idPecas []string) error {
 	return nil
 }
 
-func (f *fornecedor) AtualizarEndereco(endereco Endereco) error {
+func (f *fornecedor) AtualizarEndereco(endereco valueObject.Endereco) error {
 	if len(endereco.Endereco) == 0 {
 		return errors.New("endereço é obrigatorio")
 	}
@@ -113,11 +111,11 @@ func (f *fornecedor) NomeFantasia() string {
 	return f.nomeFantasia
 }
 
-func (f *fornecedor) Endereco() Endereco {
+func (f *fornecedor) Endereco() valueObject.Endereco {
 	return f.endereco
 }
 
-func (f *fornecedor) Contatos() []Contato {
+func (f *fornecedor) Contatos() []valueObject.Contato {
 	return f.contatos
 }
 

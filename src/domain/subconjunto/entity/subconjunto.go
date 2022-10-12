@@ -6,8 +6,6 @@ import (
 )
 
 type SubconjuntoInterface interface {
-	IsValid() bool
-	GetCodigo() string
 	AcrescentarQuantidade() int64
 	DebitarQuantidade() int64
 	Quantidade() int64
