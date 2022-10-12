@@ -3,10 +3,12 @@ package fornecedores
 import (
 	"errors"
 
-	valueObject "github.com/eltonCasacio/controle-estoque/src/domain/fornecedore/value-object"
+	valueObject "github.com/eltonCasacio/controle-estoque/src/domain/fornecedor/value-object"
+	e "github.com/eltonCasacio/controle-estoque/src/domain/shared/entity"
 )
 
 type FornecedorInterface interface {
+	e.Entity
 	Ativar() error
 	Desativar() error
 	RazaoSocial() string

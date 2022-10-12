@@ -1,6 +1,6 @@
 package shared
 
-type Entidade interface {
+type Entity interface {
 	GetId() string
 	IsValid() (bool, error)
 }
