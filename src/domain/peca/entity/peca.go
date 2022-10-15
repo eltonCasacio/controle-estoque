@@ -1,68 +1,50 @@
-package pecas
+package peca
 
-import (
-	"errors"
-)
-
-type PecaInterface interface {
-	AcrescentarQuantidade() int64
-	DebitarQuantidade() int64
-	Quantidade() int64
-}
 type peca struct {
-	idFornecedor      string
-	codigo            string
-	descricao         string
-	massa             float64
-	materiaPrima      string
-	urlDesenhoTecnico string
-	urlFoto           string
-	descricaoTecnica  string
-	quantidade        int64
+	IdFornecedor      string  `json:"id_fornecedor"`
+	Codigo            string  `json:"codigo"`
+	Descricao         string  `json:"descricao"`
+	MateriaPrima      string  `json:"materia_prima"`
+	UrlDesenhoTecnico string  `json:"url_desenho_tecnico"`
+	UrlFoto           string  `json:"url_foto"`
+	DescricaoTecnica  string  `json:"descricao_tecnica"`
+	Massa             float64 `json:"massa"`
+	Quantidade        int     `json:"quantidade"`
 }
 
 func NovaPeca(
-	// idFornecedor string,
-	codigo string,
-	// descricao string,
-	// massa float64,
-	// materiaPrima string,
-	// urlDesenhoTecnico string,
-	// urlFoto string,
-	// descricaoTecnica string,
+	idFornecedor,
+	codigo,
+	descricao,
+	materiaPrima,
+	urlDesenhoTecnico,
+	urlFoto,
+	descricaoTecnica string,
+	massa float64,
+	quantidade int,
 ) (*peca, error) {
-	return &peca{
-		// idFornecedor:      idFornecedor,
-		codigo: codigo,
-		// descricao:         descricao,
-		// massa:             massa,
-		// materiaPrima:      materiaPrima,
-		// urlDesenhoTecnico: urlDesenhoTecnico,
-		// urlFoto:           urlFoto,
-		// descricaoTecnica:  descricaoTecnica,
-	}, nil
-}
-
-func (p *peca) IsValid() bool {
-	return true
-}
-
-func (p *peca) GetCodigo() string {
-	return p.codigo
-}
-
-func (p *peca) AcrescentarQuantidade(valor int64) {
-	p.quantidade = p.quantidade + valor
-}
-
-func (p *peca) DebitarQuantidade(valor int64) error {
-	if (p.quantidade - valor) < 0 {
-		return errors.New("não há quantidade suficiente")
+	p := &peca{
+		IdFornecedor:      idFornecedor,
+		Codigo:            codigo,
+		Descricao:         descricao,
+		MateriaPrima:      materiaPrima,
+		UrlDesenhoTecnico: urlDesenhoTecnico,
+		UrlFoto:           urlFoto,
+		DescricaoTecnica:  descricaoTecnica,
+		Massa:             massa,
+		Quantidade:        quantidade,
 	}
-	p.quantidade = p.quantidade - valor
+
+	err := p.IsValid()
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
+}
+
+func (p *peca) IsValid() error {
 	return nil
 }
-
-func (p *peca) Quantidade() int64 {
-	return p.quantidade
+func (p *peca) GetID() string {
+	return p.Codigo
 }

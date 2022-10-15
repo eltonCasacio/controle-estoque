@@ -1,6 +1,6 @@
 package shared
 
 type Entity interface {
-	GetId() string
-	IsValid() (bool, error)
+	GetID() string
+	IsValid() error
 }

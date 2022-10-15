@@ -1,45 +1,36 @@
-package subconjuntos
+package subconjunto
 
 import (
 	"errors"
-	"fmt"
 )
 
-type SubconjuntoInterface interface {
-	AcrescentarQuantidade() int64
-	DebitarQuantidade() int64
-	Quantidade() int64
-	AtualizarQuantidadePecasEstoque() error
+type pecas struct {
+	Id         string `json:"id"`
+	Quantidade int64  `json:"quantidade"`
 }
-
 type subconjunto struct {
-	codigo           string
-	descricao        string
-	massa            float64
-	urlFoto          string
-	descricaoTecnica string
-	pecas            map[string]int64
-	montada          bool
-	quantidade       int64
+	Codigo           string  `json:"codigo"`
+	Descricao        string  `json:"descricao"`
+	Massa            float64 `json:"massa"`
+	UrlFoto          string  `json:"url-foto"`
+	DescricaoTecnica string  `json:"descricao-tecnica"`
+	Pecas            []pecas
+	Status           string `json:"status"`
+	Quantidade       int64  `json:"quantidade"`
 }
 
 func NovoSubconjunto() *subconjunto {
 	sc := &subconjunto{
-		codigo:           "",
-		descricao:        "",
-		massa:            0,
-		urlFoto:          "",
-		descricaoTecnica: "",
-		pecas:            nil,
-		montada:          false,
-		quantidade:       0,
+		Codigo:           "",
+		Descricao:        "",
+		Massa:            0,
+		UrlFoto:          "",
+		DescricaoTecnica: "",
+		Pecas:            nil,
+		Status:           "",
+		Quantidade:       0,
 	}
 	err := sc.IsValid()
-	if err != nil {
-		panic(err)
-	}
-
-	err = sc.AtualizarQuantidadePecasEstoque()
 	if err != nil {
 		panic(err)
 	}
@@ -47,18 +38,14 @@ func NovoSubconjunto() *subconjunto {
 }
 
 func (sc *subconjunto) IsValid() error {
-	if sc.pecas == nil {
-		return errors.New("pecas nao pode ser vazio")
+	if sc.Massa <= 1 {
+		return errors.New(MASSA_OBRIGATORIO)
+	}
+	if sc.Pecas == nil {
+		return errors.New(PECAS_OBRIGATORIO)
 	}
 	return nil
 }
-
-func (sc *subconjunto) AtualizarQuantidadePecasEstoque() error {
-	for idPeca, qtd := range sc.pecas {
-		fmt.Println(idPeca, qtd)
-	}
-	// a quantidade de pecas é igual a quantidade de subconjunto vezes a quantidade de pecas que sao usadas para montar o subconjunto
-	// calcular a quantidade de cada peca, pois o subconjunto pode ter 10 molas por exemplo, ou duas hastes inox
-	// entao para debitar do estoque a quantidade de mola, teremos que multiplicar a quantidade de subconjunto por 10 molas
-	return nil
+func (s *subconjunto) GetID() string {
+	return s.Codigo
 }

@@ -1,4 +1,4 @@
-package repository
+package fornecedor_repository
 
 import (
 	e "github.com/eltonCasacio/controle-estoque/src/domain/fornecedor/entity"
