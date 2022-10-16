@@ -1,0 +1,15 @@
+mode: set
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:13.59,15.2 1 1
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:17.75,19.2 1 1
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:21.81,23.71 2 1
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:26.2,26.22 1 1
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:23.71,25.3 1 1
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:29.74,31.51 2 0
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:34.2,34.23 1 0
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:31.51,33.3 1 0
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:37.75,38.53 1 0
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:41.2,41.12 1 0
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:38.53,40.3 1 0
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:44.56,45.81 1 0
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:48.2,48.12 1 0
+github.com/eltonCasacio/controle-estoque/internal/infrastructure/repository/usuario/usuario.repository.go:45.81,47.3 1 0
