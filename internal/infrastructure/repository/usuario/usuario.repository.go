@@ -35,15 +35,18 @@ func (u *UsuarioRepository) FindAll() (*[]usuario_entity.Usuario, error) {
 }
 
 func (u *UsuarioRepository) Update(usuario *usuario_entity.Usuario) error {
-	if err := u.DB.Updates(&usuario).Error; err != nil {
+	_, err := u.Find(usuario.Id)
+	if err != nil {
 		return err
 	}
-	return nil
+	return u.DB.Save(usuario).Error
 }
 
 func (u *UsuarioRepository) Delete(id entity.ID) error {
-	if err := u.DB.Where("id = ?", id).UpdateColumn("ativo", id).Error; err != nil {
+	usuario, err := u.Find(id)
+	if err != nil {
 		return err
 	}
-	return nil
+	usuario.Ativo = false
+	return u.DB.Save(usuario).Error
 }

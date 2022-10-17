@@ -7,4 +7,5 @@ import (
 
 type FornecedorRepositoryInterface interface {
 	r.RepositoryInterface[e.FornecedorInterface]
+	FindAllPaginate(page, limit int, sort string) ([]e.FornecedorInterface, error)
 }
