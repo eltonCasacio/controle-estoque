@@ -1,4 +1,4 @@
-package fornecedor_entity
+package entity
 
 var (
 	NOME_FANTASIA_OBRIGATORIO     = "nome fantasia é obrigatório"

@@ -1,4 +1,4 @@
-package usuario_entity
+package entity
 
 import (
 	"testing"
@@ -16,7 +16,7 @@ func TestNovoUsuario(t *testing.T) {
 	assert.Equal(t, u.Ativo, true)
 }
 
-func TestUsuarioValidarSenha(t *testing.T) {
+func TestUsuario_ValidarSenha(t *testing.T) {
 	u, err := NovoUsuario("Elton", "123")
 	assert.Nil(t, err)
 	assert.True(t, u.ValidarSenha("123"))

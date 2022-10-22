@@ -1,4 +1,4 @@
-package fornecedor_value_object
+package value_object
 
 import "errors"
 
@@ -9,10 +9,7 @@ var (
 	BAIRRO_OBRIGATORIO = "bairro é obrigatório"
 )
 
-type EnderecoInterface interface {
-	ValidarEndereco() error
-}
-type endereco struct {
+type Endereco struct {
 	Cidade      string `json:"cidade"`
 	UF          string `json:"uf"`
 	Rua         string `json:"rua"`
@@ -22,8 +19,8 @@ type endereco struct {
 	Numero      string `json:"numero"`
 }
 
-func NovoEndereco(cidade, uf, rua, complemento, bairro, numero string, cep int) (*endereco, error) {
-	e := &endereco{
+func NovoEndereco(cidade, uf, rua, complemento, bairro, numero string, cep int) (*Endereco, error) {
+	e := &Endereco{
 		Cidade:      cidade,
 		UF:          uf,
 		Rua:         rua,
@@ -39,7 +36,7 @@ func NovoEndereco(cidade, uf, rua, complemento, bairro, numero string, cep int) 
 
 	return e, nil
 }
-func (e *endereco) ValidarEndereco() error {
+func (e *Endereco) ValidarEndereco() error {
 	if e.Cidade == "" {
 		return errors.New(CIDADE_OBRIGATORIO)
 	}

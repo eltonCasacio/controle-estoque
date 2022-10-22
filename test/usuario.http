@@ -1,0 +1,7 @@
+POST http://localhost:8000/usuario HTTP/1.1
+Content-Type:  application/json
+
+{
+    "nome": "nome teste",
+    "senha": "123"
+}

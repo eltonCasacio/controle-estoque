@@ -1,4 +1,4 @@
-package fornecedor_entity
+package entity
 
 import (
 	"testing"
@@ -7,19 +7,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func MakeFornecedor() (*fornecedor, e.EnderecoInterface, []e.ContatoInterface, error) {
+func MakeFornecedor() (*Fornecedor, e.Endereco, []e.Contato, error) {
 	endereco, _ := e.NovoEndereco("Cidade", "uf", "rua", "complemento", "bairro", "123", 12345678)
 	contato, _ := e.NovoContato("telefone", "email", "celular", "elton")
-	contatos := []e.ContatoInterface{contato}
-	f, err := NovoFornecedor("nome fantasia", endereco, contatos, []string{"1"})
-	return f, endereco, contatos, err
+	contatos := []e.Contato{}
+	contatos = append(contatos, *contato)
+	f, err := NovoFornecedor("nome fantasia", *endereco, contatos, []string{"1"})
+	return f, *endereco, contatos, err
 }
 
 func TestNovoFornecedor(t *testing.T) {
 	f, e, c, err := MakeFornecedor()
 	assert.Nil(t, err)
 	assert.NotNil(t, f)
-	assert.NotNil(t, f.GetID())
+	assert.NotNil(t, f.Id)
 	assert.Equal(t, f.NomeFantasia, "nome fantasia")
 	assert.Equal(t, f.Endereco, e)
 	assert.Equal(t, f.Contatos, c)
@@ -44,7 +45,7 @@ func TestNovoFornecedorWhenIdsIsEmpty(t *testing.T) {
 
 func TestNovoFornecedorWhenContatoIsEmpty(t *testing.T) {
 	_, endereco, _, _ := MakeFornecedor()
-	f, err := NovoFornecedor("any_fantasy_name", endereco, []e.ContatoInterface{}, []string{})
+	f, err := NovoFornecedor("any_fantasy_name", endereco, []e.Contato{}, []string{})
 	assert.Nil(t, f)
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), CONTATO_OBRIGATORIO)
@@ -56,9 +57,9 @@ func TestAdicionarContato(t *testing.T) {
 	assert.NotNil(t, f)
 
 	contato, _ := e.NovoContato("1345234543", "email", "celular", "robert")
-	c = append(c, contato)
+	c = append(c, *contato)
 
-	err = f.AdicionarContato(contato)
+	err = f.AdicionarContato(*contato)
 	assert.Nil(t, err)
 	assert.Equal(t, f.Contatos, c)
 	assert.Equal(t, len(f.Contatos), 2)
@@ -68,7 +69,7 @@ func TestAdicionarContatoWhenItsEmpty(t *testing.T) {
 	f, _, _, err := MakeFornecedor()
 	assert.Nil(t, err)
 
-	err = f.AdicionarContato(nil)
+	err = f.AdicionarContato(e.Contato{})
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), CONTATO_OBRIGATORIO)
 }
@@ -78,7 +79,7 @@ func TestRemoverContatoWhitNameEmpty(t *testing.T) {
 	assert.Nil(t, err)
 
 	contato, _ := e.NovoContato("1345234543", "email", "celular", "robert")
-	_ = f.AdicionarContato(contato)
+	_ = f.AdicionarContato(*contato)
 
 	err = f.RemoverContato("")
 	assert.NotNil(t, err)
@@ -90,7 +91,7 @@ func TestRemoveContato(t *testing.T) {
 	assert.Nil(t, err)
 
 	contato, _ := e.NovoContato("1345234543", "email", "celular", "robert")
-	_ = f.AdicionarContato(contato)
+	_ = f.AdicionarContato(*contato)
 	assert.Equal(t, len(f.Contatos), 2)
 
 	err = f.RemoverContato("robert")
@@ -104,8 +105,4 @@ func TestRemoveContatoWhenContactLengthIsOne(t *testing.T) {
 	err = f.RemoverContato("elton")
 	assert.NotNil(t, err)
 	assert.Equal(t, err.Error(), CONTATO_NAO_PODE_SER_REMOVIDO)
-}
-
-func TestAtualizarPecas(t *testing.T) {
-
 }

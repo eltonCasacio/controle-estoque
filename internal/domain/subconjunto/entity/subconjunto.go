@@ -1,26 +1,32 @@
-package subconjunto_entity
+package entity
 
 import (
 	"errors"
+	"time"
+
+	"github.com/eltonCasacio/controle-estoque/pkg/entity"
 )
 
-type pecas struct {
-	Id         string `json:"id"`
-	Quantidade int64  `json:"quantidade"`
+type Pecas struct {
+	Id         entity.ID `json:"id"`
+	Quantidade int64     `json:"quantidade"`
 }
-type subconjunto struct {
-	Codigo           string  `json:"codigo"`
-	Descricao        string  `json:"descricao"`
-	Massa            float64 `json:"massa"`
-	UrlFoto          string  `json:"url-foto"`
-	DescricaoTecnica string  `json:"descricao-tecnica"`
-	Pecas            []pecas
-	Status           string `json:"status"`
-	Quantidade       int64  `json:"quantidade"`
+type Subconjunto struct {
+	Id               entity.ID `json:"id"`
+	Codigo           string    `json:"codigo"`
+	Descricao        string    `json:"descricao"`
+	Massa            float64   `json:"massa"`
+	UrlFoto          string    `json:"url-foto"`
+	DescricaoTecnica string    `json:"descricao-tecnica"`
+	Pecas            []Pecas
+	Status           string    `json:"status"`
+	Quantidade       int64     `json:"quantidade"`
+	Created_at       time.Time `json:"created_at"`
 }
 
-func NovoSubconjunto() *subconjunto {
-	sc := &subconjunto{
+func NovoSubconjunto() *Subconjunto {
+	sc := &Subconjunto{
+		Id:               entity.NewID(),
 		Codigo:           "",
 		Descricao:        "",
 		Massa:            0,
@@ -29,6 +35,7 @@ func NovoSubconjunto() *subconjunto {
 		Pecas:            nil,
 		Status:           "",
 		Quantidade:       0,
+		Created_at:       time.Now(),
 	}
 	err := sc.IsValid()
 	if err != nil {
@@ -37,7 +44,7 @@ func NovoSubconjunto() *subconjunto {
 	return sc
 }
 
-func (sc *subconjunto) IsValid() error {
+func (sc *Subconjunto) IsValid() error {
 	if sc.Massa <= 1 {
 		return errors.New(MASSA_OBRIGATORIO)
 	}
@@ -45,7 +52,4 @@ func (sc *subconjunto) IsValid() error {
 		return errors.New(PECAS_OBRIGATORIO)
 	}
 	return nil
-}
-func (s *subconjunto) GetID() string {
-	return s.Codigo
 }

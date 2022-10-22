@@ -1,4 +1,4 @@
-package subconjunto_entity
+package entity
 
 var (
 	MASSA_OBRIGATORIO = "massa é obrigatório"

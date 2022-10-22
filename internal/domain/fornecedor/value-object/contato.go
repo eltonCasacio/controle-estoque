@@ -1,4 +1,4 @@
-package fornecedor_value_object
+package value_object
 
 import "errors"
 
@@ -6,24 +6,19 @@ var (
 	NomeEObrigatorio = "Nome é obrigatório"
 )
 
-type ContatoInterface interface {
-	ValidarContato() error
-	Nome() string
+type Contato struct {
+	Telefone string `json:"telefone"`
+	Email    string `json:"email"`
+	Celular  string `json:"celular"`
+	Nome     string `json:"nome"`
 }
 
-type contato struct {
-	Telefone    string `json:"telefone"`
-	Email       string `json:"email"`
-	Celular     string `json:"celular"`
-	NomeContato string `json:"nome"`
-}
-
-func NovoContato(telefone, email, celular, nome string) (*contato, error) {
-	c := &contato{
-		Telefone:    telefone,
-		Email:       email,
-		Celular:     celular,
-		NomeContato: nome,
+func NovoContato(telefone, email, celular, nome string) (*Contato, error) {
+	c := &Contato{
+		Telefone: telefone,
+		Email:    email,
+		Celular:  celular,
+		Nome:     nome,
 	}
 	err := c.ValidarContato()
 	if err != nil {
@@ -32,13 +27,9 @@ func NovoContato(telefone, email, celular, nome string) (*contato, error) {
 	return c, nil
 }
 
-func (c *contato) ValidarContato() error {
-	if c.NomeContato == "" {
+func (c *Contato) ValidarContato() error {
+	if c.Nome == "" {
 		return errors.New(NomeEObrigatorio)
 	}
 	return nil
-}
-
-func (c *contato) Nome() string {
-	return c.NomeContato
 }

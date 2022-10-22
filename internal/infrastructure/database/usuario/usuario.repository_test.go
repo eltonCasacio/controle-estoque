@@ -1,4 +1,4 @@
-package usuario_repository
+package database
 
 import (
 	"testing"
@@ -10,18 +10,18 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetRepository() (*gorm.DB, *UsuarioRepository, error) {
+func Repository() (*gorm.DB, *UsuarioRepository, error) {
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
 	db.AutoMigrate(&usuario_entity.Usuario{})
 	repo := NovoUsuarioRpository(db)
 	return db, repo, err
 }
 
-func TestCreate(t *testing.T) {
-	db, repository, err := GetRepository()
+func TestCrriarUsuario(t *testing.T) {
+	db, repository, err := Repository()
 	assert.Nil(t, err)
 	usuario, _ := usuario_entity.NovoUsuario("roberto", "123")
-	err = repository.Create(usuario)
+	err = repository.Criar(usuario)
 	assert.Nil(t, err)
 
 	var usuarioEncontrado usuario_entity.Usuario
@@ -33,96 +33,96 @@ func TestCreate(t *testing.T) {
 	assert.NotEmpty(t, usuarioEncontrado.Senha)
 }
 
-func TestFind(t *testing.T) {
-	_, repository, err := GetRepository()
+func TestBuscarUsuarioPorId(t *testing.T) {
+	_, repository, err := Repository()
 	assert.Nil(t, err)
 	usuario, _ := usuario_entity.NovoUsuario("roberto", "123")
-	_ = repository.Create(usuario)
-	usuarioEncontrado, err := repository.Find(usuario.Id)
+	_ = repository.Criar(usuario)
+	usuarioEncontrado, err := repository.BuscarPorID(usuario.Id)
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarioEncontrado)
 	assert.Equal(t, usuarioEncontrado.Nome, usuario.Nome)
 	assert.Equal(t, usuarioEncontrado.Id, usuario.Id)
 }
 
-func TestFindQuandoNaoExiste(t *testing.T) {
-	_, repository, err := GetRepository()
+func TestBuscarUsuario_QueNaoExiste(t *testing.T) {
+	_, repository, err := Repository()
 	assert.Nil(t, err)
-	usuarioEncontrado, err := repository.Find(entity.NewID())
+	usuarioEncontrado, err := repository.BuscarPorID(entity.NewID())
 	assert.Nil(t, usuarioEncontrado)
 	assert.NotNil(t, err)
 }
 
-func TestFindAll(t *testing.T) {
-	_, repository, err := GetRepository()
+func TestBuscarTodos(t *testing.T) {
+	_, repository, err := Repository()
 	assert.Nil(t, err)
 	usuario1, _ := usuario_entity.NovoUsuario("elton", "123")
 	usuario2, _ := usuario_entity.NovoUsuario("roberto", "123")
 	usuario3, _ := usuario_entity.NovoUsuario("daniel", "123")
 
-	_ = repository.Create(usuario1)
-	_ = repository.Create(usuario2)
-	_ = repository.Create(usuario3)
+	_ = repository.Criar(usuario1)
+	_ = repository.Criar(usuario2)
+	_ = repository.Criar(usuario3)
 
-	usuarios, err := repository.FindAll()
+	usuarios, err := repository.BuscarTodos()
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarios)
-	assert.Equal(t, len(*usuarios), 3)
+	assert.Equal(t, len(usuarios), 3)
 }
 
-func TestFindAll_NotFound(t *testing.T) {
-	_, repository, err := GetRepository()
+func TestBuscarTodos_NaoEncotrado(t *testing.T) {
+	_, repository, err := Repository()
 	assert.Nil(t, err)
-	usuarios, err := repository.FindAll()
+	usuarios, err := repository.BuscarTodos()
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarios)
-	assert.Equal(t, len(*usuarios), 0)
+	assert.Equal(t, len(usuarios), 0)
 }
 
-func TestUpdateUser(t *testing.T) {
-	_, repository, err := GetRepository()
+func TestAtualizarUsuario(t *testing.T) {
+	_, repository, err := Repository()
 	assert.Nil(t, err)
 
 	usuario, _ := usuario_entity.NovoUsuario("Elton", "123")
-	_ = repository.Create(usuario)
+	_ = repository.Criar(usuario)
 
-	uEncontrado, _ := repository.Find(usuario.Id)
+	uEncontrado, _ := repository.BuscarPorID(usuario.Id)
 	uEncontrado.Nome = "Casacio"
 
-	repository.Update(uEncontrado)
-	usuarioAtualizado, err := repository.Find(usuario.Id)
+	repository.Atualizar(uEncontrado)
+	usuarioAtualizado, err := repository.BuscarPorID(usuario.Id)
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarioAtualizado)
 	assert.Equal(t, usuarioAtualizado.Nome, "Casacio")
 }
 
-func TestUpdateUserInvalid(t *testing.T) {
-	_, repository, err := GetRepository()
+func TestAtualizarUsuario_UsuarioInvalido(t *testing.T) {
+	_, repository, err := Repository()
 	assert.Nil(t, err)
-	err = repository.Update(&usuario_entity.Usuario{})
+	err = repository.Atualizar(&usuario_entity.Usuario{})
 	assert.NotNil(t, err)
 }
 
-func TestDelete(t *testing.T) {
-	_, repository, err := GetRepository()
+func TestExcluirUsuario(t *testing.T) {
+	_, repository, err := Repository()
 	assert.Nil(t, err)
 
 	usuario, _ := usuario_entity.NovoUsuario("Elton", "123")
-	_ = repository.Create(usuario)
+	_ = repository.Criar(usuario)
 
-	repository.Delete(usuario.Id)
+	repository.Excluir(usuario.Id)
 	assert.Nil(t, err)
 
-	uEncontrado, err := repository.Find(usuario.Id)
+	uEncontrado, err := repository.BuscarPorID(usuario.Id)
 	assert.Nil(t, err)
 	assert.NotNil(t, uEncontrado)
 	assert.Equal(t, uEncontrado.Nome, usuario.Nome)
 	assert.Equal(t, uEncontrado.Ativo, false)
 }
 
-func TestDeleteWithIdInvalid(t *testing.T) {
-	_, repository, err := GetRepository()
+func TestExcluirUsuario_ID_Invalido(t *testing.T) {
+	_, repository, err := Repository()
 	assert.Nil(t, err)
-	err = repository.Delete(entity.NewID())
+	err = repository.Excluir(entity.NewID())
 	assert.NotNil(t, err)
 }

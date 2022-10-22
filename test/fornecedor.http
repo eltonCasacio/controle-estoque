@@ -1,0 +1,15 @@
+POST http://localhost:8000/fornecedor
+Content-Type:  application/json
+
+{
+    "nome_fantasia": "nome teste",
+    "endereco": {
+        "cidade": "cidade",
+        "uf": "uf",
+        "rua": "rua",
+        "complemento": "complemento",
+        "bairro": "bairro",
+        "cep": 1234567,
+        "numero": "123"
+    }
+}

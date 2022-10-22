@@ -1,31 +1,35 @@
-package fornecedor_entity
+package entity
 
 import (
 	"errors"
+	"time"
 
 	f "github.com/eltonCasacio/controle-estoque/internal/domain/fornecedor/value-object"
+	"github.com/eltonCasacio/controle-estoque/pkg/entity"
 )
 
-type fornecedor struct {
-	Id           string `json:"id"`
-	RazaoSocial  string `json:"razao-social"`
-	NomeFantasia string `json:"nome-fantasia"`
-	CNPJ         string `json:"cnpj"`
-	Ie           string `json:"ie"`
-	Endereco     f.EnderecoInterface
-	Contatos     []f.ContatoInterface
-	IdPecas      []string `json:"id-pecas"`
-	Ativo        bool     `json:"ativo"`
+type Fornecedor struct {
+	Id           entity.ID `json:"id"`
+	RazaoSocial  string    `json:"razao_social"`
+	NomeFantasia string    `json:"nome_fantasia"`
+	CNPJ         string    `json:"cnpj"`
+	Ie           string    `json:"ie"`
+	Endereco     f.Endereco
+	Contatos     []f.Contato
+	IdPecas      []string  `json:"id_pecas"`
+	Ativo        bool      `json:"ativo"`
+	Created_at   time.Time `json:"created_at"`
 }
 
 func NovoFornecedor(
 	nomeFantasia string,
-	endereco f.EnderecoInterface,
-	contatos []f.ContatoInterface,
+	endereco f.Endereco,
+	contatos []f.Contato,
 	idPecas []string,
-) (*fornecedor, error) {
+) (*Fornecedor, error) {
 
-	f := &fornecedor{
+	f := &Fornecedor{
+		Id:           entity.NewID(),
 		RazaoSocial:  "",
 		NomeFantasia: nomeFantasia,
 		CNPJ:         "",
@@ -34,6 +38,7 @@ func NovoFornecedor(
 		Contatos:     contatos,
 		IdPecas:      idPecas,
 		Ativo:        true,
+		Created_at:   time.Now(),
 	}
 	err := f.IsValid()
 	if err != nil {
@@ -43,7 +48,7 @@ func NovoFornecedor(
 	return f, nil
 }
 
-func (f *fornecedor) IsValid() error {
+func (f *Fornecedor) IsValid() error {
 	if len(f.Contatos) == 0 {
 		return errors.New(CONTATO_OBRIGATORIO)
 	}
@@ -57,19 +62,15 @@ func (f *fornecedor) IsValid() error {
 	return nil
 }
 
-func (f *fornecedor) GetID() string {
-	return f.Id
-}
-
-func (f *fornecedor) AdicionarContato(contato f.ContatoInterface) error {
-	if contato == nil {
+func (f *Fornecedor) AdicionarContato(contato f.Contato) error {
+	if contato.ValidarContato() != nil {
 		return errors.New(CONTATO_OBRIGATORIO)
 	}
 	f.Contatos = append(f.Contatos, contato)
 	return nil
 }
 
-func (f *fornecedor) RemoverContato(nome string) error {
+func (f *Fornecedor) RemoverContato(nome string) error {
 	if len(f.Contatos) == 1 {
 		return errors.New(CONTATO_NAO_PODE_SER_REMOVIDO)
 	}
@@ -78,7 +79,7 @@ func (f *fornecedor) RemoverContato(nome string) error {
 	}
 
 	for k, v := range f.Contatos {
-		if v.Nome() == nome {
+		if v.Nome == nome {
 			f.Contatos[k] = f.Contatos[0]
 			f.Contatos = f.Contatos[1:]
 		}
@@ -86,7 +87,7 @@ func (f *fornecedor) RemoverContato(nome string) error {
 	return nil
 }
 
-func (f *fornecedor) AtualizarPecas(idPecas []string) error {
+func (f *Fornecedor) AtualizarPecas(idPecas []string) error {
 	if len(idPecas) == 0 {
 		return errors.New(PECA_OBRIGATORIO)
 	}
@@ -94,7 +95,7 @@ func (f *fornecedor) AtualizarPecas(idPecas []string) error {
 	return nil
 }
 
-func (f *fornecedor) AtualizarEndereco(endereco f.EnderecoInterface) error {
+func (f *Fornecedor) AtualizarEndereco(endereco f.Endereco) error {
 	err := endereco.ValidarEndereco()
 	if err != nil {
 		return errors.New(ENDERECO_OBRIGATORIO)
@@ -103,7 +104,7 @@ func (f *fornecedor) AtualizarEndereco(endereco f.EnderecoInterface) error {
 	return nil
 }
 
-func (f *fornecedor) Ativar() error {
+func (f *Fornecedor) Ativar() error {
 	err := f.IsValid()
 	if err != nil {
 		return err
@@ -112,7 +113,7 @@ func (f *fornecedor) Ativar() error {
 	return nil
 }
 
-func (f *fornecedor) Desativar() error {
+func (f *Fornecedor) Desativar() error {
 	f.Ativo = false
 	return nil
 }
