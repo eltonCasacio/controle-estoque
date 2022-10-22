@@ -38,7 +38,7 @@ func TestBuscarUsuarioPorId(t *testing.T) {
 	assert.Nil(t, err)
 	usuario, _ := usuario_entity.NovoUsuario("roberto", "123")
 	_ = repository.Criar(usuario)
-	usuarioEncontrado, err := repository.BuscarPorID(usuario.Id)
+	usuarioEncontrado, err := repository.BuscarPorID(usuario.Id.String())
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarioEncontrado)
 	assert.Equal(t, usuarioEncontrado.Nome, usuario.Nome)
@@ -48,7 +48,7 @@ func TestBuscarUsuarioPorId(t *testing.T) {
 func TestBuscarUsuario_QueNaoExiste(t *testing.T) {
 	_, repository, err := Repository()
 	assert.Nil(t, err)
-	usuarioEncontrado, err := repository.BuscarPorID(entity.NewID())
+	usuarioEncontrado, err := repository.BuscarPorID(entity.NewID().String())
 	assert.Nil(t, usuarioEncontrado)
 	assert.NotNil(t, err)
 }
@@ -86,11 +86,11 @@ func TestAtualizarUsuario(t *testing.T) {
 	usuario, _ := usuario_entity.NovoUsuario("Elton", "123")
 	_ = repository.Criar(usuario)
 
-	uEncontrado, _ := repository.BuscarPorID(usuario.Id)
+	uEncontrado, _ := repository.BuscarPorID(usuario.Id.String())
 	uEncontrado.Nome = "Casacio"
 
 	repository.Atualizar(uEncontrado)
-	usuarioAtualizado, err := repository.BuscarPorID(usuario.Id)
+	usuarioAtualizado, err := repository.BuscarPorID(usuario.Id.String())
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarioAtualizado)
 	assert.Equal(t, usuarioAtualizado.Nome, "Casacio")
@@ -110,10 +110,10 @@ func TestExcluirUsuario(t *testing.T) {
 	usuario, _ := usuario_entity.NovoUsuario("Elton", "123")
 	_ = repository.Criar(usuario)
 
-	repository.Excluir(usuario.Id)
+	repository.Excluir(usuario.Id.String())
 	assert.Nil(t, err)
 
-	uEncontrado, err := repository.BuscarPorID(usuario.Id)
+	uEncontrado, err := repository.BuscarPorID(usuario.Id.String())
 	assert.Nil(t, err)
 	assert.NotNil(t, uEncontrado)
 	assert.Equal(t, uEncontrado.Nome, usuario.Nome)
@@ -123,6 +123,6 @@ func TestExcluirUsuario(t *testing.T) {
 func TestExcluirUsuario_ID_Invalido(t *testing.T) {
 	_, repository, err := Repository()
 	assert.Nil(t, err)
-	err = repository.Excluir(entity.NewID())
+	err = repository.Excluir(entity.NewID().String())
 	assert.NotNil(t, err)
 }

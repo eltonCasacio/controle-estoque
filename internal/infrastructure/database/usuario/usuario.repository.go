@@ -2,7 +2,6 @@ package database
 
 import (
 	e "github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
-	"github.com/eltonCasacio/controle-estoque/pkg/entity"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +17,7 @@ func (u *UsuarioRepository) Criar(usuario *e.Usuario) error {
 	return u.DB.Create(usuario).Error
 }
 
-func (u *UsuarioRepository) BuscarPorID(id entity.ID) (*e.Usuario, error) {
+func (u *UsuarioRepository) BuscarPorID(id string) (*e.Usuario, error) {
 	var usuario e.Usuario
 	if err := u.DB.Where("id = ?", id).First(&usuario).Error; err != nil {
 		return nil, err
@@ -35,14 +34,14 @@ func (u *UsuarioRepository) BuscarTodos() ([]e.Usuario, error) {
 }
 
 func (u *UsuarioRepository) Atualizar(usuario *e.Usuario) error {
-	_, err := u.BuscarPorID(usuario.Id)
+	_, err := u.BuscarPorID(usuario.Id.String())
 	if err != nil {
 		return err
 	}
 	return u.DB.Save(usuario).Error
 }
 
-func (u *UsuarioRepository) Excluir(id entity.ID) error {
+func (u *UsuarioRepository) Excluir(id string) error {
 	usuario, err := u.BuscarPorID(id)
 	if err != nil {
 		return err

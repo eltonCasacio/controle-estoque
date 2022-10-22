@@ -31,7 +31,13 @@ func main() {
 	usuarioDB := database.NovoUsuarioRpository(db)
 	usuarioHandler := handlers.NovoUsuarioHandler(usuarioDB)
 
-	r.Post("/usuario", usuarioHandler.CriarUsuario)
+	r.Route("/usuario", func(r chi.Router) {
+		r.Post("/", usuarioHandler.CriarUsuario)
+		r.Get("/", usuarioHandler.BuscarTodos)
+		r.Get("/{id}", usuarioHandler.BuscarUsuarioPorID)
+		r.Put("/{id}", usuarioHandler.Atualizar)
+		r.Delete("/{id}", usuarioHandler.Excluir)
+	})
 
 	http.ListenAndServe(":8000", r)
 }
