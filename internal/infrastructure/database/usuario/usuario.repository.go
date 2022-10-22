@@ -49,3 +49,7 @@ func (u *UsuarioRepository) Excluir(id string) error {
 	usuario.Ativo = false
 	return u.DB.Save(usuario).Error
 }
+
+func (u *UsuarioRepository) BuscarPorNome(nome string) (*e.Usuario, error) {
+	return &e.Usuario{}, nil
+}

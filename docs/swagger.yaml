@@ -1,0 +1,227 @@
+basePath: /
+definitions:
+  dto.CriarUsuarioInput:
+    properties:
+      nome:
+        type: string
+      senha:
+        type: string
+    type: object
+  dto.GetJWTInput:
+    properties:
+      nome:
+        type: string
+      senha:
+        type: string
+    type: object
+  dto.GetJWTOutput:
+    properties:
+      access_token:
+        type: string
+    type: object
+  entity.Usuario:
+    properties:
+      _:
+        type: string
+      ativo:
+        type: boolean
+      id:
+        type: string
+      nome:
+        type: string
+    type: object
+  handlers.Error:
+    properties:
+      error-message:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: eltoncasacio@hotmail.com.br
+    name: Elton Casacio & Wevyrton Antero
+    url: https://www.instagram.com/elton_casacio/
+  description: API para controle de estoque de peças
+  license:
+    name: C3R Innovation
+    url: https://c3rinnovation.com
+  termsOfService: http://swagger.io/terms/
+  title: API Controle de estoque
+  version: "1.0"
+paths:
+  /usuario:
+    get:
+      consumes:
+      - application/json
+      description: Buscar Todos Usuários
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Usuario'
+            type: array
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Buscar Usuários
+      tags:
+      - usuarios
+    post:
+      consumes:
+      - application/json
+      description: Criar usuário
+      parameters:
+      - description: usuario request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CriarUsuarioInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Criar usuário
+      tags:
+      - usuarios
+  /usuario/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Excluir Usuário
+      parameters:
+      - description: usuario Id
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Excluir Usuário
+      tags:
+      - usuarios
+    get:
+      consumes:
+      - application/json
+      description: Buscar Usuário por ID
+      parameters:
+      - description: usuario ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Usuario'
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Buscar Usuário
+      tags:
+      - usuarios
+    put:
+      consumes:
+      - application/json
+      description: Atualizar dados do usuário
+      parameters:
+      - description: usuario Id
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: usuario request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CriarUsuarioInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Atualizar dados do usuário
+      tags:
+      - usuarios
+  /usuario/generate_token:
+    post:
+      consumes:
+      - application/json
+      description: Gerar Token JWT
+      parameters:
+      - description: usuario credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GetJWTInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetJWTOutput'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Gerar Token JWT
+      tags:
+      - usuarios
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

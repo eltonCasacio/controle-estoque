@@ -7,4 +7,5 @@ import (
 
 type UserRepositoryInterface interface {
 	repository.RepositoryInterface[entity.Usuario]
+	BuscarPorNome(nome string) (*entity.Usuario, error)
 }
