@@ -13,10 +13,6 @@ import (
 	"github.com/go-chi/jwtauth"
 )
 
-type Error struct {
-	ErrorMessage string `json:"error-message"`
-}
-
 type UsuarioHandler struct {
 	usuarioRepository database.UserRepositoryInterface
 }

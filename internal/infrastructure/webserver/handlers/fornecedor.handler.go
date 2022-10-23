@@ -11,11 +11,11 @@ import (
 )
 
 type FornecedorHandler struct {
-	FornecedorRepository database.FornecedorRepository
+	FornecedorRepository database.FornecedorRepositoryInterface
 }
 
-func NovoFornecedorHandler(db database.FornecedorRepository) *FornecedorHandler {
-	return &FornecedorHandler{FornecedorRepository: db}
+func NovoFornecedorHandler(repo database.FornecedorRepositoryInterface) *FornecedorHandler {
+	return &FornecedorHandler{FornecedorRepository: repo}
 }
 
 func (h *FornecedorHandler) CriarFornecedor(w http.ResponseWriter, r *http.Request) {

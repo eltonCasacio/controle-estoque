@@ -17,21 +17,21 @@ func (f *FornecedorRepository) Criar(fornecedor *e.Fornecedor) error {
 	return f.DB.Create(fornecedor).Error
 }
 
-func (f *FornecedorRepository) BuscarPorID(id int64) (*e.Fornecedor, error) {
+func (f *FornecedorRepository) BuscarPorID(id string) (*e.Fornecedor, error) {
 	var fornecedor e.Fornecedor
 	err := f.DB.First(&fornecedor, "id = ?", id).Error
 	return &fornecedor, err
 }
 
-func (f *FornecedorRepository) BuscarTodos(fornecedor e.Fornecedor) ([]e.Fornecedor, error) {
+func (f *FornecedorRepository) BuscarTodos() ([]e.Fornecedor, error) {
 	return nil, nil
 }
 
-func (f *FornecedorRepository) Atualizar(fornecedor e.Fornecedor) error {
+func (f *FornecedorRepository) Atualizar(fornecedor *e.Fornecedor) error {
 	return nil
 }
 
-func (f *FornecedorRepository) Excluir(id int64) error {
+func (f *FornecedorRepository) Excluir(id string) error {
 	return nil
 }
 

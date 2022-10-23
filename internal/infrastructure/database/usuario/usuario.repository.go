@@ -53,3 +53,17 @@ func (u *UsuarioRepository) Excluir(id string) error {
 func (u *UsuarioRepository) BuscarPorNome(nome string) (*e.Usuario, error) {
 	return &e.Usuario{}, nil
 }
+
+func (u *UsuarioRepository) BuscarPaginado(page, limit int, sort string) ([]e.Usuario, error) {
+	var usuarios []e.Usuario
+	var err error
+	if sort != "" && sort != "asc" && sort != "desc" {
+		sort = "asc"
+	}
+	if page != 0 && limit != 0 {
+		err = u.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at " + sort).Find(&usuarios).Error
+	} else {
+		err = u.DB.Order("created_at " + sort).Find(&usuarios).Error
+	}
+	return usuarios, err
+}

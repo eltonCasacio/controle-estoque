@@ -6,7 +6,8 @@ import (
 	"github.com/eltonCasacio/controle-estoque/configs"
 	_ "github.com/eltonCasacio/controle-estoque/docs"
 	"github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
-	database "github.com/eltonCasacio/controle-estoque/internal/infrastructure/database/usuario"
+	dbFornecedor "github.com/eltonCasacio/controle-estoque/internal/infrastructure/database/fornecedor"
+	dbUser "github.com/eltonCasacio/controle-estoque/internal/infrastructure/database/usuario"
 	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/webserver/handlers"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -19,15 +20,12 @@ import (
 // @version         1.0
 // @description     API para controle de estoque de peças
 // @termsOfService  http://swagger.io/terms/
-
-// @contact.name   Elton Casacio & Wevyrton Antero
-// @contact.url    https://www.instagram.com/elton_casacio/
-// @contact.email  eltoncasacio@hotmail.com.br
-
-// @license.name   C3R Innovation
-// @license.url    https://c3rinnovation.com
-
-// @host      localhost:8000
+// @contact.name   	Elton Casacio & Wevyrton Antero
+// @contact.url    	https://www.instagram.com/elton_casacio/
+// @contact.email  	eltoncasacio@hotmail.com.br
+// @license.name   	C3R Innovation
+// @license.url    	https://c3rinnovation.com
+// @host      		localhost:8000
 // @BasePath  /
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
@@ -43,13 +41,14 @@ func main() {
 		panic(err)
 	}
 	db.AutoMigrate(&entity.Usuario{})
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.WithValue("jwt", configs.TokenAuth))
 	r.Use(middleware.WithValue("jwtExperiesIn", configs.JwtExperesIn))
 
-	usuarioDB := database.NovoUsuarioRpository(db)
+	usuarioDB := dbUser.NovoUsuarioRpository(db)
 	usuarioHandler := handlers.NovoUsuarioHandler(usuarioDB)
 
 	r.Route("/usuario", func(r chi.Router) {
@@ -58,6 +57,13 @@ func main() {
 		r.Get("/{id}", usuarioHandler.BuscarUsuarioPorID)
 		r.Put("/{id}", usuarioHandler.Atualizar)
 		r.Delete("/{id}", usuarioHandler.Excluir)
+	})
+
+	fornecedorDB := dbFornecedor.NovoFornecedorRepository(db)
+	fornecedorHandler := handlers.NovoFornecedorHandler(fornecedorDB)
+
+	r.Route("/fornecedor", func(r chi.Router) {
+		r.Post("/", fornecedorHandler.CriarFornecedor)
 	})
 
 	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
