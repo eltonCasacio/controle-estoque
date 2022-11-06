@@ -13,7 +13,6 @@ func TestNovoUsuario(t *testing.T) {
 	assert.NotEmpty(t, u.Id)
 	assert.Equal(t, u.Nome, "Elton")
 	assert.NotEqual(t, u.Senha, "123")
-	assert.Equal(t, u.Ativo, true)
 }
 
 func TestUsuario_ValidarSenha(t *testing.T) {

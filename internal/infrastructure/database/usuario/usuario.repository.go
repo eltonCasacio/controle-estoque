@@ -27,7 +27,7 @@ func (u *UsuarioRepository) BuscarPorID(id string) (*e.Usuario, error) {
 
 func (u *UsuarioRepository) BuscarTodos() ([]e.Usuario, error) {
 	var usuarios []e.Usuario
-	if err := u.DB.Find(&usuarios).Error; err != nil {
+	if err := u.DB.Where("ativo = true").Find(&usuarios).Error; err != nil {
 		return nil, err
 	}
 	return usuarios, nil
@@ -51,7 +51,11 @@ func (u *UsuarioRepository) Excluir(id string) error {
 }
 
 func (u *UsuarioRepository) BuscarPorNome(nome string) (*e.Usuario, error) {
-	return &e.Usuario{}, nil
+	var usuario e.Usuario
+	if err := u.DB.Where("nome = ?", nome).First(&usuario).Error; err != nil {
+		return nil, err
+	}
+	return &usuario, nil
 }
 
 func (u *UsuarioRepository) BuscarPaginado(page, limit int, sort string) ([]e.Usuario, error) {
@@ -61,7 +65,7 @@ func (u *UsuarioRepository) BuscarPaginado(page, limit int, sort string) ([]e.Us
 		sort = "asc"
 	}
 	if page != 0 && limit != 0 {
-		err = u.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at " + sort).Find(&usuarios).Error
+		err = u.DB.Limit(limit).Offset((page - 1) * limit).Order("created_at " + sort).Where("deleted_at = null").Find(&usuarios).Error
 	} else {
 		err = u.DB.Order("created_at " + sort).Find(&usuarios).Error
 	}

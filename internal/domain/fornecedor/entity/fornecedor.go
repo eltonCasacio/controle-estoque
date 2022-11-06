@@ -2,7 +2,6 @@ package entity
 
 import (
 	"errors"
-	"time"
 
 	f "github.com/eltonCasacio/controle-estoque/internal/domain/fornecedor/value-object"
 	"github.com/eltonCasacio/controle-estoque/pkg/entity"
@@ -16,9 +15,8 @@ type Fornecedor struct {
 	Ie           string    `json:"ie"`
 	Endereco     f.Endereco
 	Contatos     []f.Contato
-	IdPecas      []string  `json:"id_pecas"`
-	Ativo        bool      `json:"ativo"`
-	Created_at   time.Time `json:"created_at"`
+	IdPecas      []string `json:"id_pecas"`
+	Ativo        bool     `json:"ativo"`
 }
 
 func NovoFornecedor(
@@ -38,7 +36,6 @@ func NovoFornecedor(
 		Contatos:     contatos,
 		IdPecas:      idPecas,
 		Ativo:        true,
-		Created_at:   time.Now(),
 	}
 	err := f.IsValid()
 	if err != nil {

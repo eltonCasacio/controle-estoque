@@ -11,5 +11,14 @@ Content-Type:  application/json
         "bairro": "bairro",
         "cep": 1234567,
         "numero": "123"
-    }
+    },
+    "contatos": [
+        {
+            "telefone": "19971199999",
+            "email": "mail@mail.com",
+            "celular": "19971199999",
+            "nome": "nome contato",
+        }
+    ],
+    "id_pecas": ["1", "2"]
 }

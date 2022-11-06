@@ -31,12 +31,12 @@ import (
 // @in header
 // @name Authorization
 func main() {
-	configs, err := configs.LoadConfig("./cmd/.env")
+	configs, err := configs.LoadConfig(".env")
 	if err != nil {
 		panic(err)
 	}
 
-	db, err := gorm.Open(sqlite.Open("./cmd/safisa.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("./safisa.db"), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -50,6 +50,8 @@ func main() {
 
 	usuarioDB := dbUser.NovoUsuarioRpository(db)
 	usuarioHandler := handlers.NovoUsuarioHandler(usuarioDB)
+	fornecedorDB := dbFornecedor.NovoFornecedorRepository(db)
+	fornecedorHandler := handlers.NovoFornecedorHandler(fornecedorDB)
 
 	r.Route("/usuario", func(r chi.Router) {
 		r.Post("/", usuarioHandler.CriarUsuario)
@@ -59,11 +61,12 @@ func main() {
 		r.Delete("/{id}", usuarioHandler.Excluir)
 	})
 
-	fornecedorDB := dbFornecedor.NovoFornecedorRepository(db)
-	fornecedorHandler := handlers.NovoFornecedorHandler(fornecedorDB)
-
 	r.Route("/fornecedor", func(r chi.Router) {
 		r.Post("/", fornecedorHandler.CriarFornecedor)
+		r.Get("/", fornecedorHandler.BuscarTodos)
+		r.Get("/{id}", fornecedorHandler.BuscarUsuarioPorID)
+		r.Put("/{id}", fornecedorHandler.Atualizar)
+		r.Delete("/{id}", fornecedorHandler.Excluir)
 	})
 
 	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))

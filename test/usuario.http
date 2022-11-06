@@ -12,12 +12,12 @@ Content-Type:  application/json
 
 
 ###
-GET  http://localhost:8000/usuario/ec21e403-66c3-4fb6-8109-44cc8cecf5d4 HTTP/1.1
+GET  http://localhost:8000/usuario/7847ea02-51f7-4c85-934e-183b8e71e2ff HTTP/1.1
 Content-Type:  application/json
 
 
 ###
-PUT   http://localhost:8000/usuario/ec21e403-66c3-4fb6-8109-44cc8cecf5d4 HTTP/1.1
+PUT   http://localhost:8000/usuario/7847ea02-51f7-4c85-934e-183b8e71e2ff HTTP/1.1
 Content-Type:  application/json
 
 {
@@ -26,5 +26,5 @@ Content-Type:  application/json
 }
 
 ###
-DELETE    http://localhost:8000/usuario/ec21e403-66c3-4fb6-8109-44cc8cecf5d4 HTTP/1.1
+DELETE    http://localhost:8000/usuario/ HTTP/1.1
 Content-Type:  application/json

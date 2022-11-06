@@ -27,10 +27,10 @@ func NovoUsuarioHandler(repo database.UserRepositoryInterface) *UsuarioHandler {
 // @Tags         usuarios
 // @Accept       json
 // @Produce      json
-// @Param        request   body     dto.GetJWTInput  true  "usuario credentials"
-// @Success      200  {object}  dto.GetJWTOutput
-// @Failure      404  {object}  Error
-// @Failure      500  {object}  Error
+// @Param        request   			body     dto.GetJWTInput  true  "usuario credentials"
+// @Success      200  {object}  	dto.GetJWTOutput
+// @Failure      404  {object}  	Error
+// @Failure      500  {object}  	Error
 // @Router       /usuario/generate_token [post]
 func (uh *UsuarioHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
 	jwt := r.Context().Value("jwt").(*jwtauth.JWTAuth)
@@ -83,14 +83,14 @@ func (h *UsuarioHandler) CriarUsuario(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	u, err := entity.NovoUsuario(usuario.Nome, usuario.Senha)
+	newUsuario, err := entity.NovoUsuario(usuario.Nome, usuario.Senha)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		error := Error{ErrorMessage: err.Error()}
 		json.NewEncoder(w).Encode(error)
 		return
 	}
-	h.usuarioRepository.Criar(u)
+	h.usuarioRepository.Criar(newUsuario)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		error := Error{ErrorMessage: err.Error()}

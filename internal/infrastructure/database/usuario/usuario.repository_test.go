@@ -17,7 +17,7 @@ func Repository() (*gorm.DB, *UsuarioRepository, error) {
 	return db, repo, err
 }
 
-func TestCrriarUsuario(t *testing.T) {
+func TestCriarUsuario(t *testing.T) {
 	db, repository, err := Repository()
 	assert.Nil(t, err)
 	usuario, _ := usuario_entity.NovoUsuario("roberto", "123")
@@ -68,6 +68,9 @@ func TestBuscarTodos(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarios)
 	assert.Equal(t, len(usuarios), 3)
+	assert.Equal(t, usuarios[0].Ativo, true)
+	assert.Equal(t, usuarios[1].Ativo, true)
+	assert.Equal(t, usuarios[2].Ativo, true)
 }
 
 func TestBuscarTodos_NaoEncotrado(t *testing.T) {
@@ -125,4 +128,16 @@ func TestExcluirUsuario_ID_Invalido(t *testing.T) {
 	assert.Nil(t, err)
 	err = repository.Excluir(entity.NewID().String())
 	assert.NotNil(t, err)
+}
+
+func TestBuscarUsuarioPorNome(t *testing.T) {
+	_, repository, err := Repository()
+	assert.Nil(t, err)
+	usuario, _ := usuario_entity.NovoUsuario("roberto", "123")
+	_ = repository.Criar(usuario)
+	usuarioEncontrado, err := repository.BuscarPorNome(usuario.Nome)
+	assert.Nil(t, err)
+	assert.NotNil(t, usuarioEncontrado)
+	assert.Equal(t, usuarioEncontrado.Nome, usuario.Nome)
+	assert.Equal(t, usuarioEncontrado.Id, usuario.Id)
 }

@@ -1,6 +1,8 @@
 package value_object
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	CIDADE_OBRIGATORIO = "cidade é obrigatório"
