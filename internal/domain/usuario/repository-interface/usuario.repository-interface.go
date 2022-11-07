@@ -1,11 +1,11 @@
-package database
+package repository_interface
 
 import (
+	"github.com/eltonCasacio/controle-estoque/internal/domain/shared/repository"
 	"github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
-	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/shared/repository"
 )
 
-type UserRepositoryInterface interface {
+type UsuarioRepositoryInterface interface {
 	repository.RepositoryInterface[entity.Usuario]
 	BuscarPorNome(nome string) (*entity.Usuario, error)
 }

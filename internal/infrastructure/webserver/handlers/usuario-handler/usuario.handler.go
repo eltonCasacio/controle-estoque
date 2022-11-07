@@ -6,18 +6,19 @@ import (
 	"time"
 
 	"github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
-	database "github.com/eltonCasacio/controle-estoque/internal/infrastructure/database/usuario"
-	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/dto"
+	repository_interface "github.com/eltonCasacio/controle-estoque/internal/domain/usuario/repository-interface"
+	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/webserver/handlers"
+	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/webserver/handlers/usuario-handler/dto"
 	pkg "github.com/eltonCasacio/controle-estoque/pkg/entity"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
 )
 
 type UsuarioHandler struct {
-	usuarioRepository database.UserRepositoryInterface
+	usuarioRepository repository_interface.UsuarioRepositoryInterface
 }
 
-func NovoUsuarioHandler(repo database.UserRepositoryInterface) *UsuarioHandler {
+func NovoUsuarioHandler(repo repository_interface.UsuarioRepositoryInterface) *UsuarioHandler {
 	return &UsuarioHandler{usuarioRepository: repo}
 }
 
@@ -40,14 +41,15 @@ func (uh *UsuarioHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&usuario)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		error := Error{ErrorMessage: err.Error()}
+		error := handlers.Error{ErrorMessage: err.Error()}
 		json.NewEncoder(w).Encode(error)
 		return
 	}
+
 	u, err := uh.usuarioRepository.BuscarPorID(usuario.Nome)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		error := Error{ErrorMessage: err.Error()}
+		error := handlers.Error{ErrorMessage: err.Error()}
 		json.NewEncoder(w).Encode(error)
 		return
 	}
@@ -86,14 +88,14 @@ func (h *UsuarioHandler) CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	newUsuario, err := entity.NovoUsuario(usuario.Nome, usuario.Senha)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		error := Error{ErrorMessage: err.Error()}
+		error := handlers.Error{ErrorMessage: err.Error()}
 		json.NewEncoder(w).Encode(error)
 		return
 	}
 	h.usuarioRepository.Criar(newUsuario)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		error := Error{ErrorMessage: err.Error()}
+		error := handlers.Error{ErrorMessage: err.Error()}
 		json.NewEncoder(w).Encode(error)
 		return
 	}

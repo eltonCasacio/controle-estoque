@@ -1,4 +1,4 @@
-package database
+package gorm
 
 import (
 	e "github.com/eltonCasacio/controle-estoque/internal/domain/fornecedor/entity"

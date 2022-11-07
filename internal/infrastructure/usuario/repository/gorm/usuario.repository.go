@@ -1,4 +1,4 @@
-package database
+package gorm
 
 import (
 	e "github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
@@ -27,7 +27,7 @@ func (u *UsuarioRepository) BuscarPorID(id string) (*e.Usuario, error) {
 
 func (u *UsuarioRepository) BuscarTodos() ([]e.Usuario, error) {
 	var usuarios []e.Usuario
-	if err := u.DB.Where("ativo = true").Find(&usuarios).Error; err != nil {
+	if err := u.DB.Find(&usuarios).Error; err != nil {
 		return nil, err
 	}
 	return usuarios, nil
