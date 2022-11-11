@@ -1,4 +1,4 @@
-package gorm_repository
+package model
 
 import (
 	e "github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"

@@ -1,4 +1,4 @@
-package gorm
+package usuario
 
 import (
 	"github.com/eltonCasacio/controle-estoque/internal/domain/shared/repository"

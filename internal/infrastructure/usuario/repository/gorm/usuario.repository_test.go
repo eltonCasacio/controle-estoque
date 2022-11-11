@@ -25,12 +25,12 @@ func TestCriarUsuario(t *testing.T) {
 	assert.Nil(t, err)
 
 	var usuarioEncontrado usuario_entity.Usuario
-	err = db.First(&usuarioEncontrado, "nome = ?", usuario.Nome).Error
+	err = db.First(&usuarioEncontrado, "nome = ?", usuario.GetNome()).Error
 	assert.Nil(t, err)
-	assert.Equal(t, usuarioEncontrado.Nome, usuario.Nome)
-	assert.Equal(t, usuarioEncontrado.Ativo, true)
-	assert.Equal(t, usuarioEncontrado.Id, usuario.Id)
-	assert.NotEmpty(t, usuarioEncontrado.Senha)
+	assert.Equal(t, usuarioEncontrado.GetNome(), usuario.GetNome())
+	assert.Equal(t, usuarioEncontrado.IsAtivo(), true)
+	assert.Equal(t, usuarioEncontrado.GetID(), usuario.GetID())
+	assert.NotEmpty(t, usuarioEncontrado.GetSenha())
 }
 
 func TestBuscarUsuarioPorId(t *testing.T) {
@@ -38,11 +38,11 @@ func TestBuscarUsuarioPorId(t *testing.T) {
 	assert.Nil(t, err)
 	usuario, _ := usuario_entity.NovoUsuario("roberto", "123")
 	_ = repository.Criar(usuario)
-	usuarioEncontrado, err := repository.BuscarPorID(usuario.Id.String())
+	usuarioEncontrado, err := repository.BuscarPorID(usuario.GetID().String())
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarioEncontrado)
-	assert.Equal(t, usuarioEncontrado.Nome, usuario.Nome)
-	assert.Equal(t, usuarioEncontrado.Id, usuario.Id)
+	assert.Equal(t, usuarioEncontrado.GetNome(), usuario.GetNome())
+	assert.Equal(t, usuarioEncontrado.GetID(), usuario.GetID())
 }
 
 func TestBuscarUsuario_QueNaoExiste(t *testing.T) {
@@ -68,9 +68,9 @@ func TestBuscarTodos(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarios)
 	assert.Equal(t, len(usuarios), 3)
-	assert.Equal(t, usuarios[0].Ativo, true)
-	assert.Equal(t, usuarios[1].Ativo, true)
-	assert.Equal(t, usuarios[2].Ativo, true)
+	assert.Equal(t, usuarios[0].IsAtivo(), true)
+	assert.Equal(t, usuarios[1].IsAtivo(), true)
+	assert.Equal(t, usuarios[2].IsAtivo(), true)
 }
 
 func TestAtualizarUsuario(t *testing.T) {
@@ -80,14 +80,14 @@ func TestAtualizarUsuario(t *testing.T) {
 	usuario, _ := usuario_entity.NovoUsuario("Elton", "123")
 	_ = repository.Criar(usuario)
 
-	uEncontrado, _ := repository.BuscarPorID(usuario.Id.String())
-	uEncontrado.Nome = "Casacio"
+	uEncontrado, _ := repository.BuscarPorID(usuario.GetID().String())
+	uEncontrado.ChangeNome("Casacio")
 
 	repository.Atualizar(uEncontrado)
-	usuarioAtualizado, err := repository.BuscarPorID(usuario.Id.String())
+	usuarioAtualizado, err := repository.BuscarPorID(usuario.GetID().String())
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarioAtualizado)
-	assert.Equal(t, usuarioAtualizado.Nome, "Casacio")
+	assert.Equal(t, usuarioAtualizado.GetNome(), "Casacio")
 }
 
 func TestAtualizarUsuario_UsuarioInvalido(t *testing.T) {
@@ -104,14 +104,14 @@ func TestExcluirUsuario(t *testing.T) {
 	usuario, _ := usuario_entity.NovoUsuario("Elton", "123")
 	_ = repository.Criar(usuario)
 
-	repository.Excluir(usuario.Id.String())
+	repository.Excluir(usuario.GetID().String())
 	assert.Nil(t, err)
 
-	uEncontrado, err := repository.BuscarPorID(usuario.Id.String())
+	uEncontrado, err := repository.BuscarPorID(usuario.GetID().String())
 	assert.Nil(t, err)
 	assert.NotNil(t, uEncontrado)
-	assert.Equal(t, uEncontrado.Nome, usuario.Nome)
-	assert.Equal(t, uEncontrado.Ativo, false)
+	assert.Equal(t, uEncontrado.GetNome(), usuario.GetNome())
+	assert.Equal(t, uEncontrado.IsAtivo(), false)
 }
 
 func TestExcluirUsuario_ID_Invalido(t *testing.T) {
@@ -126,9 +126,9 @@ func TestBuscarUsuarioPorNome(t *testing.T) {
 	assert.Nil(t, err)
 	usuario, _ := usuario_entity.NovoUsuario("roberto", "123")
 	_ = repository.Criar(usuario)
-	usuarioEncontrado, err := repository.BuscarPorNome(usuario.Nome)
+	usuarioEncontrado, err := repository.BuscarPorNome(usuario.GetNome())
 	assert.Nil(t, err)
 	assert.NotNil(t, usuarioEncontrado)
-	assert.Equal(t, usuarioEncontrado.Nome, usuario.Nome)
-	assert.Equal(t, usuarioEncontrado.Id, usuario.Id)
+	assert.Equal(t, usuarioEncontrado.GetNome(), usuario.GetNome())
+	assert.Equal(t, usuarioEncontrado.GetID(), usuario.GetID())
 }

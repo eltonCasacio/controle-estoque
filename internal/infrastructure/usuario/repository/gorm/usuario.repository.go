@@ -42,7 +42,7 @@ func (u *UsuarioRepository) BuscarTodos() ([]entity.Usuario, error) {
 
 func (u *UsuarioRepository) Atualizar(usuario *entity.Usuario) error {
 	usuarioModel := ConvertUsuarioDomainToModel(usuario)
-	_, err := u.BuscarPorID(usuario.Id.String())
+	_, err := u.BuscarPorID(string(usuario.GetID().String()))
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (u *UsuarioRepository) Excluir(id string) error {
 	if err != nil {
 		return err
 	}
-	usuario.Ativo = false
+	usuario.Desativar()
 
 	usuarioModel := ConvertUsuarioDomainToModel(usuario)
 	return u.DB.Save(usuarioModel).Error

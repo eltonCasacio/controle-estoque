@@ -9,6 +9,8 @@ import (
 	repository_interface "github.com/eltonCasacio/controle-estoque/internal/domain/usuario/repository-interface"
 	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/webserver/handlers"
 	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/webserver/handlers/usuario-handler/dto"
+	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/webserver/handlers/usuario-handler/mapper"
+	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/webserver/handlers/usuario-handler/model"
 	pkg "github.com/eltonCasacio/controle-estoque/pkg/entity"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
@@ -58,7 +60,7 @@ func (uh *UsuarioHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, tokenString, _ := jwt.Encode(map[string]interface{}{
-		"sub": u.Id.String(),
+		"sub": u.GetID().String(),
 		"exp": time.Now().Add(time.Second * time.Duration(jwtExperiesIn)).Unix(),
 	})
 	accessToken := dto.GetJWTOutput{AccessToken: tokenString}
@@ -124,8 +126,10 @@ func (h *UsuarioHandler) BuscarUsuarioPorID(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 	}
+
+	u_convertido := mapper.ConvertUsuarioDomainToModel(usuario)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(usuario)
+	json.NewEncoder(w).Encode(u_convertido)
 }
 
 // BuscarUsuario godoc
@@ -144,8 +148,13 @@ func (h *UsuarioHandler) BuscarTodos(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 	}
+	var u_convertidos []model.Usuario
+	for _, usuario := range usuarios {
+		u := mapper.ConvertUsuarioDomainToModel(&usuario)
+		u_convertidos = append(u_convertidos, *u)
+	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(usuarios)
+	json.NewEncoder(w).Encode(u_convertidos)
 }
 
 // AtualizarUsuario godoc
@@ -167,23 +176,29 @@ func (h *UsuarioHandler) Atualizar(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	usuario := entity.Usuario{}
+
+	usuario := model.Usuario{}
 	err := json.NewDecoder(r.Body).Decode(&usuario)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	usuario.Id, err = pkg.ParseID(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	_, err = h.usuarioRepository.BuscarPorID(id)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	err = h.usuarioRepository.Atualizar(&usuario)
+
+	u := mapper.ConvertUsuarioModelToDomain(&usuario)
+
+	err = h.usuarioRepository.Atualizar(u)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
