@@ -1,4 +1,4 @@
-package repository_interface
+package gorm
 
 import (
 	"github.com/eltonCasacio/controle-estoque/internal/domain/shared/repository"

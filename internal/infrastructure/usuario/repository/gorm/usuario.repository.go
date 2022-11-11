@@ -1,7 +1,7 @@
-package gorm
+package gorm_repository
 
 import (
-	e "github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
+	"github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
 	"gorm.io/gorm"
 )
 
@@ -13,32 +13,40 @@ func NovoUsuarioRpository(db *gorm.DB) *UsuarioRepository {
 	return &UsuarioRepository{DB: db}
 }
 
-func (u *UsuarioRepository) Criar(usuario *e.Usuario) error {
-	return u.DB.Create(usuario).Error
+func (u *UsuarioRepository) Criar(usuario *entity.Usuario) error {
+	usuarioModel := ConvertUsuarioDomainToModel(usuario)
+	return u.DB.Create(usuarioModel).Error
 }
 
-func (u *UsuarioRepository) BuscarPorID(id string) (*e.Usuario, error) {
-	var usuario e.Usuario
+func (u *UsuarioRepository) BuscarPorID(id string) (*entity.Usuario, error) {
+	var usuario Usuario
 	if err := u.DB.Where("id = ?", id).First(&usuario).Error; err != nil {
 		return nil, err
 	}
-	return &usuario, nil
+	usuarioConvertido := ConvertUsuarioModelToDomain(&usuario)
+	return usuarioConvertido, nil
 }
 
-func (u *UsuarioRepository) BuscarTodos() ([]e.Usuario, error) {
-	var usuarios []e.Usuario
+func (u *UsuarioRepository) BuscarTodos() ([]entity.Usuario, error) {
+	var usuarios []Usuario
 	if err := u.DB.Find(&usuarios).Error; err != nil {
 		return nil, err
 	}
-	return usuarios, nil
+	var usuariosDomain []entity.Usuario
+	for _, usuario := range usuarios {
+		u_convertido := ConvertUsuarioModelToDomain(&usuario)
+		usuariosDomain = append(usuariosDomain, *u_convertido)
+	}
+	return usuariosDomain, nil
 }
 
-func (u *UsuarioRepository) Atualizar(usuario *e.Usuario) error {
+func (u *UsuarioRepository) Atualizar(usuario *entity.Usuario) error {
+	usuarioModel := ConvertUsuarioDomainToModel(usuario)
 	_, err := u.BuscarPorID(usuario.Id.String())
 	if err != nil {
 		return err
 	}
-	return u.DB.Save(usuario).Error
+	return u.DB.Save(usuarioModel).Error
 }
 
 func (u *UsuarioRepository) Excluir(id string) error {
@@ -47,19 +55,23 @@ func (u *UsuarioRepository) Excluir(id string) error {
 		return err
 	}
 	usuario.Ativo = false
-	return u.DB.Save(usuario).Error
+
+	usuarioModel := ConvertUsuarioDomainToModel(usuario)
+	return u.DB.Save(usuarioModel).Error
 }
 
-func (u *UsuarioRepository) BuscarPorNome(nome string) (*e.Usuario, error) {
-	var usuario e.Usuario
+func (u *UsuarioRepository) BuscarPorNome(nome string) (*entity.Usuario, error) {
+	var usuario Usuario
 	if err := u.DB.Where("nome = ?", nome).First(&usuario).Error; err != nil {
 		return nil, err
 	}
-	return &usuario, nil
+
+	usuarioConvertido := ConvertUsuarioModelToDomain(&usuario)
+	return usuarioConvertido, nil
 }
 
-func (u *UsuarioRepository) BuscarPaginado(page, limit int, sort string) ([]e.Usuario, error) {
-	var usuarios []e.Usuario
+func (u *UsuarioRepository) BuscarPaginado(page, limit int, sort string) ([]entity.Usuario, error) {
+	var usuarios []Usuario
 	var err error
 	if sort != "" && sort != "asc" && sort != "desc" {
 		sort = "asc"
@@ -69,5 +81,11 @@ func (u *UsuarioRepository) BuscarPaginado(page, limit int, sort string) ([]e.Us
 	} else {
 		err = u.DB.Order("created_at " + sort).Find(&usuarios).Error
 	}
-	return usuarios, err
+
+	var usuariosDomain []entity.Usuario
+	for _, usuario := range usuarios {
+		u_convertido := ConvertUsuarioModelToDomain(&usuario)
+		usuariosDomain = append(usuariosDomain, *u_convertido)
+	}
+	return usuariosDomain, err
 }

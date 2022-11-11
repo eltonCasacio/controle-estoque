@@ -5,8 +5,7 @@ import (
 
 	"github.com/eltonCasacio/controle-estoque/configs"
 	_ "github.com/eltonCasacio/controle-estoque/docs"
-	"github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
-	usuario "github.com/eltonCasacio/controle-estoque/internal/infrastructure/usuario/repository/gorm"
+	usuario_repository "github.com/eltonCasacio/controle-estoque/internal/infrastructure/usuario/repository/gorm"
 	handlers "github.com/eltonCasacio/controle-estoque/internal/infrastructure/webserver/handlers/usuario-handler"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -39,7 +38,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&entity.Usuario{})
+	db.AutoMigrate(&usuario_repository.Usuario{})
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -47,7 +46,7 @@ func main() {
 	r.Use(middleware.WithValue("jwt", configs.TokenAuth))
 	r.Use(middleware.WithValue("jwtExperiesIn", configs.JwtExperesIn))
 
-	usuarioDB := usuario.NovoUsuarioRpository(db)
+	usuarioDB := usuario_repository.NovoUsuarioRpository(db)
 	usuarioHandler := handlers.NovoUsuarioHandler(usuarioDB)
 
 	r.Route("/usuario", func(r chi.Router) {

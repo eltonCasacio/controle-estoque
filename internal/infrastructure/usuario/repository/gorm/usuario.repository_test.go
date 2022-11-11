@@ -1,4 +1,4 @@
-package gorm
+package gorm_repository
 
 import (
 	"testing"
@@ -12,7 +12,7 @@ import (
 
 func Repository() (*gorm.DB, *UsuarioRepository, error) {
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-	db.AutoMigrate(&usuario_entity.Usuario{})
+	db.AutoMigrate(&Usuario{})
 	repo := NovoUsuarioRpository(db)
 	return db, repo, err
 }
@@ -71,15 +71,6 @@ func TestBuscarTodos(t *testing.T) {
 	assert.Equal(t, usuarios[0].Ativo, true)
 	assert.Equal(t, usuarios[1].Ativo, true)
 	assert.Equal(t, usuarios[2].Ativo, true)
-}
-
-func TestBuscarTodos_NaoEncotrado(t *testing.T) {
-	_, repository, err := Repository()
-	assert.Nil(t, err)
-	usuarios, err := repository.BuscarTodos()
-	assert.Nil(t, err)
-	assert.NotNil(t, usuarios)
-	assert.Equal(t, len(usuarios), 0)
 }
 
 func TestAtualizarUsuario(t *testing.T) {
