@@ -1,8 +1,7 @@
-package gorm_repository
+package mysql_repository
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
 	usuario "github.com/eltonCasacio/controle-estoque/internal/infrastructure/usuario/model"
@@ -102,12 +101,12 @@ func (u *UsuarioRepository) Atualizar(usuario *entity.Usuario) error {
 }
 
 func (u *UsuarioRepository) Excluir(id string) error {
-	stmt, err := u.DB.Prepare("delete from usuarios")
+	stmt, err := u.DB.Prepare("delete from usuarios where id = ?")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec()
+	_, err = stmt.Exec(id)
 	if err != nil {
 		return err
 	}
@@ -138,32 +137,31 @@ func (u *UsuarioRepository) BuscarPorNome(nome string) (*entity.Usuario, error) 
 	return &usuario, nil
 }
 
-func (u *UsuarioRepository) BuscarPaginado(page, limit int, sort string) ([]entity.Usuario, error) {
-	fmt.Printf("PAGINA: %v - LIMIT: %v", page, limit)
-	// rows, err := u.DB.Query("SELECT * from usuarios LIMIT ?, ?;", page, limit)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// defer rows.Close()
+func (u *UsuarioRepository) BuscarPaginado(page, limit string, sort string) ([]entity.Usuario, error) {
+	rows, err := u.DB.Query("SELECT * from usuarios LIMIT ?, ?;", page, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-	// var usuarios []entity.Usuario
+	var usuarios []entity.Usuario
 
-	// for rows.Next() {
-	// 	var usuario usuario.UsuarioModel
-	// 	err := rows.Scan(&usuario.Id, &usuario.Nome, &usuario.Senha, &usuario.Ativo)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	var u entity.Usuario
-	// 	u.ChangeID(usuario.Id)
-	// 	u.ChangeNome(usuario.Nome)
-	// 	u.ChangeSenha(usuario.Senha)
-	// 	u.Desativar()
-	// 	if usuario.Ativo {
-	// 		u.Ativar()
-	// 	}
+	for rows.Next() {
+		var usuario usuario.UsuarioModel
+		err := rows.Scan(&usuario.Id, &usuario.Nome, &usuario.Senha, &usuario.Ativo)
+		if err != nil {
+			return nil, err
+		}
+		var u entity.Usuario
+		u.ChangeID(usuario.Id)
+		u.ChangeNome(usuario.Nome)
+		u.ChangeSenha(usuario.Senha)
+		u.Desativar()
+		if usuario.Ativo {
+			u.Ativar()
+		}
 
-	// 	usuarios = append(usuarios, u)
-	// }
-	return nil, nil
+		usuarios = append(usuarios, u)
+	}
+	return usuarios, nil
 }

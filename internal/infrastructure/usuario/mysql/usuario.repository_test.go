@@ -1,4 +1,4 @@
-package gorm_repository
+package mysql_repository
 
 import (
 	"database/sql"
@@ -105,7 +105,7 @@ func TestExcluirUsuario(t *testing.T) {
 	assert.Nil(t, uEncontrado)
 }
 
-func TestBuscarUsuarioPorNome(t *testing.T) {
+func TestBuscarPaginado(t *testing.T) {
 	_, repository, _ := Repository()
 	usuario1, _ := usuario_entity.NovoUsuario("usuario 1", "123")
 	_ = repository.Criar(usuario1)
@@ -119,7 +119,7 @@ func TestBuscarUsuarioPorNome(t *testing.T) {
 	usuario4, _ := usuario_entity.NovoUsuario("usuario 4", "123")
 	_ = repository.Criar(usuario4)
 
-	usuariosEncontrado, err := repository.BuscarPaginado(1, 3, "")
+	usuariosEncontrado, err := repository.BuscarPaginado("1", "3", "")
 	assert.Nil(t, err)
 	assert.NotNil(t, usuariosEncontrado)
 	assert.Equal(t, 3, len(usuariosEncontrado))

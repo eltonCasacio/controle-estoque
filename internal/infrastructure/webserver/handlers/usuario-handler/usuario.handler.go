@@ -238,19 +238,11 @@ func (h *UsuarioHandler) Excluir(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// BuscarUsuario Paginado godoc
-// @Summary      Paginacao Usuários
-// @Description  Buscar paginado
-// @Tags         usuarios
-// @Accept       json
-// @Produce      json
-// @Success      200  {array}  entity.Usuario
-// @Failure      404
-// @Failure      500  {object}  Error
-// @Security ApiKeyAuth
 func (h *UsuarioHandler) BuscarPaginado(w http.ResponseWriter, r *http.Request) {
-	fmt.Print("??")
-	usuarios, err := h.usuarioRepository.BuscarTodos()
+	page := r.URL.Query().Get("page")
+	limit := r.URL.Query().Get("limit")
+	fmt.Println(page, limit)
+	usuarios, err := h.usuarioRepository.BuscarPaginado(page, limit, "")
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 	}

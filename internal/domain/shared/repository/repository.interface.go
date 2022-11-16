@@ -6,5 +6,5 @@ type RepositoryInterface[T interface{}] interface {
 	BuscarTodos() ([]T, error)
 	Atualizar(t *T) error
 	Excluir(id string) error
-	BuscarPaginado(page, limit int, sort string) ([]T, error)
+	BuscarPaginado(page, limit string, sort string) ([]T, error)
 }
