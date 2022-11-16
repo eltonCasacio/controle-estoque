@@ -12,13 +12,13 @@ var (
 )
 
 type Endereco struct {
-	Cidade      string `json:"cidade"`
-	UF          string `json:"uf"`
-	Rua         string `json:"rua"`
-	Complemento string `json:"complemento"`
-	Bairro      string `json:"bairro"`
-	CEP         int    `json:"cep"`
-	Numero      string `json:"numero"`
+	Cidade      string
+	UF          string
+	Rua         string
+	Complemento string
+	Bairro      string
+	CEP         int
+	Numero      string
 }
 
 func NovoEndereco(cidade, uf, rua, complemento, bairro, numero string, cep int) (*Endereco, error) {

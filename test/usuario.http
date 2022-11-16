@@ -2,7 +2,7 @@ POST http://localhost:8000/usuario HTTP/1.1
 Content-Type:  application/json
 
 {
-    "nome": "nome teste",
+    "nome": "nome4",
     "senha": "123"
 }
 
@@ -12,12 +12,12 @@ Content-Type:  application/json
 
 
 ###
-GET  http://localhost:8000/usuario/082e33e2-d92b-4360-b484-e7ab50ca1159 HTTP/1.1
+GET  http://localhost:8000/usuario/4c54400c-d139-444e-8917-72f21be9ad41 HTTP/1.1
 Content-Type:  application/json
 
 
 ###
-PUT   http://localhost:8000/usuario/082e33e2-d92b-4360-b484-e7ab50ca1159 HTTP/1.1
+PUT   http://localhost:8000/usuario/4c54400c-d139-444e-8917-72f21be9ad41 HTTP/1.1
 Content-Type:  application/json
 
 {
@@ -27,5 +27,9 @@ Content-Type:  application/json
 }
 
 ###
-DELETE    http://localhost:8000/usuario/082e33e2-d92b-4360-b484-e7ab50ca1159 HTTP/1.1
+DELETE    http://localhost:8000/usuario/4c54400c-d139-444e-8917-72f21be9ad41 HTTP/1.1
+Content-Type:  application/json
+
+###
+GET  http://localhost:8000/usuario/paginado?pagina=1&limit=2 HTTP/1.1
 Content-Type:  application/json

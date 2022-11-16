@@ -4,3 +4,10 @@ go test -bench=.
 go test -bench=. -run=^#
 go test -bench=. -run=^# -benchmem
 go test -bench=. -run=^# -count=10 -benchtime=5s
+
+
+
+****************** BANCO DE DADOS MYSQL ******************
+mysql -uroot -p safisa 
+
+create table usuarios(id varchar(255), nome varchar(255), senha varchar(255), ativo bool)

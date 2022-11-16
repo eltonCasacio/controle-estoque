@@ -1,4 +1,4 @@
-package repositoryinterface
+package interfaces_fornecedor
 
 import (
 	"github.com/eltonCasacio/controle-estoque/internal/domain/fornecedor/entity"

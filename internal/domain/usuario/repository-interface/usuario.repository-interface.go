@@ -1,4 +1,4 @@
-package usuario
+package interfaces_usuario
 
 import (
 	"github.com/eltonCasacio/controle-estoque/internal/domain/shared/repository"

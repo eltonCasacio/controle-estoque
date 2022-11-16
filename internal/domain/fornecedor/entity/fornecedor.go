@@ -8,15 +8,15 @@ import (
 )
 
 type Fornecedor struct {
-	Id           entity.ID `json:"id"`
-	RazaoSocial  string    `json:"razao_social"`
-	NomeFantasia string    `json:"nome_fantasia"`
-	CNPJ         string    `json:"cnpj"`
-	Ie           string    `json:"ie"`
-	Endereco     f.Endereco
-	Contatos     []f.Contato
-	IdPecas      []string `json:"id_pecas"`
-	Ativo        bool     `json:"ativo"`
+	id           entity.ID
+	razaoSocial  string
+	nomeFantasia string
+	cnpj         string
+	ie           string
+	endereco     f.Endereco
+	contatos     []f.Contato
+	idPecas      []string
+	ativo        bool
 }
 
 func NovoFornecedor(
@@ -27,15 +27,15 @@ func NovoFornecedor(
 ) (*Fornecedor, error) {
 
 	f := &Fornecedor{
-		Id:           entity.NewID(),
-		RazaoSocial:  "",
-		NomeFantasia: nomeFantasia,
-		CNPJ:         "",
-		Ie:           "",
-		Endereco:     endereco,
-		Contatos:     contatos,
-		IdPecas:      idPecas,
-		Ativo:        true,
+		id:           entity.NewID(),
+		razaoSocial:  "",
+		nomeFantasia: nomeFantasia,
+		cnpj:         "",
+		ie:           "",
+		endereco:     endereco,
+		contatos:     contatos,
+		idPecas:      idPecas,
+		ativo:        true,
 	}
 	err := f.IsValid()
 	if err != nil {
@@ -46,14 +46,14 @@ func NovoFornecedor(
 }
 
 func (f *Fornecedor) IsValid() error {
-	if len(f.Contatos) == 0 {
+	if len(f.contatos) == 0 {
 		return errors.New(CONTATO_OBRIGATORIO)
 	}
 
-	if f.NomeFantasia == "" {
+	if f.nomeFantasia == "" {
 		return errors.New(NOME_FANTASIA_OBRIGATORIO)
 	}
-	if len(f.IdPecas) < 1 {
+	if len(f.idPecas) < 1 {
 		return errors.New(PECA_OBRIGATORIO)
 	}
 	return nil
@@ -63,22 +63,22 @@ func (f *Fornecedor) AdicionarContato(contato f.Contato) error {
 	if contato.ValidarContato() != nil {
 		return errors.New(CONTATO_OBRIGATORIO)
 	}
-	f.Contatos = append(f.Contatos, contato)
+	f.contatos = append(f.contatos, contato)
 	return nil
 }
 
 func (f *Fornecedor) RemoverContato(nome string) error {
-	if len(f.Contatos) == 1 {
+	if len(f.contatos) == 1 {
 		return errors.New(CONTATO_NAO_PODE_SER_REMOVIDO)
 	}
 	if nome == "" {
 		return errors.New(NOME_CONTATO_OBRIGATORIO)
 	}
 
-	for k, v := range f.Contatos {
+	for k, v := range f.contatos {
 		if v.Nome == nome {
-			f.Contatos[k] = f.Contatos[0]
-			f.Contatos = f.Contatos[1:]
+			f.contatos[k] = f.contatos[0]
+			f.contatos = f.contatos[1:]
 		}
 	}
 	return nil
@@ -88,7 +88,7 @@ func (f *Fornecedor) AtualizarPecas(idPecas []string) error {
 	if len(idPecas) == 0 {
 		return errors.New(PECA_OBRIGATORIO)
 	}
-	f.IdPecas = idPecas
+	f.idPecas = idPecas
 	return nil
 }
 
@@ -97,7 +97,7 @@ func (f *Fornecedor) AtualizarEndereco(endereco f.Endereco) error {
 	if err != nil {
 		return errors.New(ENDERECO_OBRIGATORIO)
 	}
-	f.Endereco = endereco
+	f.endereco = endereco
 	return nil
 }
 
@@ -106,11 +106,51 @@ func (f *Fornecedor) Ativar() error {
 	if err != nil {
 		return err
 	}
-	f.Ativo = true
+	f.ativo = true
 	return nil
 }
 
 func (f *Fornecedor) Desativar() error {
-	f.Ativo = false
+	f.ativo = false
 	return nil
+}
+
+func (f *Fornecedor) GetID() entity.ID {
+	return f.id
+}
+
+func (f *Fornecedor) GetRazaoSocial() string {
+	return f.razaoSocial
+}
+
+func (f *Fornecedor) GetNomeFantasia() string {
+	return f.nomeFantasia
+}
+
+func (f *Fornecedor) GetCNPJ() string {
+	return f.cnpj
+}
+
+func (f *Fornecedor) GetIe() string {
+	return f.ie
+}
+
+func (f *Fornecedor) GetEndereco() f.Endereco {
+	return f.endereco
+}
+
+func (f *Fornecedor) GetContatos() []f.Contato {
+	return f.contatos
+}
+
+func (f *Fornecedor) GetIdPecas() []string {
+	return f.idPecas
+}
+
+func (f *Fornecedor) IsAtivo() bool {
+	return f.ativo
+}
+
+func (f *Fornecedor) ChangeID(id entity.ID) {
+	f.id = id
 }

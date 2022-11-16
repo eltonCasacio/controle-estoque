@@ -1,17 +1,17 @@
 package main
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/eltonCasacio/controle-estoque/configs"
 	_ "github.com/eltonCasacio/controle-estoque/docs"
-	usuario_repository "github.com/eltonCasacio/controle-estoque/internal/infrastructure/usuario/repository/gorm"
+	usuario_repository "github.com/eltonCasacio/controle-estoque/internal/infrastructure/usuario/mysql"
 	handlers "github.com/eltonCasacio/controle-estoque/internal/infrastructure/webserver/handlers/usuario-handler"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	_ "github.com/go-sql-driver/mysql"
 	httpSwagger "github.com/swaggo/http-swagger"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 // @title           API Controle de estoque
@@ -34,11 +34,10 @@ func main() {
 		panic(err)
 	}
 
-	db, err := gorm.Open(sqlite.Open("./safisa.db"), &gorm.Config{})
+	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/safisa")
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&usuario_repository.Usuario{})
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -55,6 +54,7 @@ func main() {
 		r.Get("/{id}", usuarioHandler.BuscarUsuarioPorID)
 		r.Put("/{id}", usuarioHandler.Atualizar)
 		r.Delete("/{id}", usuarioHandler.Excluir)
+		r.Delete("/paginado", usuarioHandler.BuscarPaginado)
 	})
 
 	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))

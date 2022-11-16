@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -235,4 +236,29 @@ func (h *UsuarioHandler) Excluir(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+}
+
+// BuscarUsuario Paginado godoc
+// @Summary      Paginacao Usuários
+// @Description  Buscar paginado
+// @Tags         usuarios
+// @Accept       json
+// @Produce      json
+// @Success      200  {array}  entity.Usuario
+// @Failure      404
+// @Failure      500  {object}  Error
+// @Security ApiKeyAuth
+func (h *UsuarioHandler) BuscarPaginado(w http.ResponseWriter, r *http.Request) {
+	fmt.Print("??")
+	usuarios, err := h.usuarioRepository.BuscarTodos()
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+	}
+	var u_convertidos []model.Usuario
+	for _, usuario := range usuarios {
+		u := mapper.ConvertUsuarioDomainToModel(&usuario)
+		u_convertidos = append(u_convertidos, *u)
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(u_convertidos)
 }

@@ -7,9 +7,9 @@ services:
     restart: always
     platform: linux/amd64
     environment:
-      MSQL_ROOT_PASSWORD: root
-      MSQL_DATABASE: safisa
-      MSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: safisa
+      MYSQL_PASSWORD: root
     ports:
       - 3306:3306
       

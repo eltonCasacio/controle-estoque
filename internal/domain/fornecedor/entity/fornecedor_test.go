@@ -20,11 +20,11 @@ func TestNovoFornecedor(t *testing.T) {
 	f, e, c, err := MakeFornecedor()
 	assert.Nil(t, err)
 	assert.NotNil(t, f)
-	assert.NotNil(t, f.Id)
-	assert.Equal(t, f.NomeFantasia, "nome fantasia")
-	assert.Equal(t, f.Endereco, e)
-	assert.Equal(t, f.Contatos, c)
-	assert.NotNil(t, f.NomeFantasia)
+	assert.NotNil(t, f.id)
+	assert.Equal(t, f.nomeFantasia, "nome fantasia")
+	assert.Equal(t, f.endereco, e)
+	assert.Equal(t, f.contatos, c)
+	assert.NotNil(t, f.nomeFantasia)
 }
 
 func TestNovoFornecedorWhenNomeFatasiaIsEmpty(t *testing.T) {
@@ -61,8 +61,8 @@ func TestAdicionarContato(t *testing.T) {
 
 	err = f.AdicionarContato(*contato)
 	assert.Nil(t, err)
-	assert.Equal(t, f.Contatos, c)
-	assert.Equal(t, len(f.Contatos), 2)
+	assert.Equal(t, f.contatos, c)
+	assert.Equal(t, len(f.contatos), 2)
 }
 
 func TestAdicionarContatoWhenItsEmpty(t *testing.T) {
@@ -92,11 +92,11 @@ func TestRemoveContato(t *testing.T) {
 
 	contato, _ := e.NovoContato("1345234543", "email", "celular", "robert")
 	_ = f.AdicionarContato(*contato)
-	assert.Equal(t, len(f.Contatos), 2)
+	assert.Equal(t, len(f.contatos), 2)
 
 	err = f.RemoverContato("robert")
 	assert.Nil(t, err)
-	assert.Equal(t, len(f.Contatos), 1)
+	assert.Equal(t, len(f.contatos), 1)
 }
 
 func TestRemoveContatoWhenContactLengthIsOne(t *testing.T) {
