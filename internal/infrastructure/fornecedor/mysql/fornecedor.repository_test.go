@@ -29,7 +29,6 @@ func (suite *FornecedorTestSuite) SetupTest() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 	suite.DB = db
 	suite.Repository = NovoFornecedorRepository(suite.DB)
 
@@ -41,21 +40,27 @@ func (suite *FornecedorTestSuite) SetupTest() {
 
 	suite.Endereco = value_object.Endereco{Cidade: "valinhos", UF: "sp", Rua: "any_rua", Complemento: "any_complemento", Bairro: "any_bairro", CEP: 23423, Numero: "2345345"}
 	fornecedor, _ := f_entity.NovoFornecedor("nome fantasia", suite.Endereco, suite.Contatos, []string{"1", "2"})
+	fornecedor.ChangeRazaoSocial("razao social")
+	fornecedor.ChangeCNPJ("123245345")
+	fornecedor.ChangeIe("inscricao estadual")
 	suite.Fornecedor = *fornecedor
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_Criar() {
-	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/safisa")
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
-	repo := NovoFornecedorRepository(db)
-
-	err = repo.Criar(&suite.Fornecedor)
+	err := suite.Repository.Criar(&suite.Fornecedor)
 	assert.Nil(suite.T(), err)
+	defer suite.DB.Close()
 
-	// var fornecedor f_entity.Fornecedor
-	// err = suite.DB.First(&fornecedor, "id = ?", suite.Fornecedor.GetID()).Error
-	// assert.Nil(suite.T(), err)
+	stmt, _ := suite.DB.Prepare("delete from funcionarios")
+	stmt.Exec()
+}
+
+func (suite *FornecedorTestSuite) TestFornecedor_BuscarTodos() {
+	suite.Repository.Criar(&suite.Fornecedor)
+	suite.Repository.Criar(&suite.Fornecedor)
+	defer suite.DB.Close()
+
+	fornecedores, err := suite.Repository.BuscarTodos()
+	assert.Nil(suite.T(), err)
+	assert.Greater(suite.T(), len(fornecedores), 0)
 }

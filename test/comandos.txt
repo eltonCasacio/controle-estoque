@@ -11,3 +11,4 @@ go test -bench=. -run=^# -count=10 -benchtime=5s
 mysql -uroot -p safisa 
 
 create table usuarios(id varchar(255), nome varchar(255), senha varchar(255), ativo bool)
+create table fornecedores(id varchar(255), razao_social varchar(255), nome_fantasia varchar(255), cnpj varchar(20), ie varchar(30), ativo bool)

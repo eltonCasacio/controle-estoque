@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	e "github.com/eltonCasacio/controle-estoque/internal/domain/fornecedor/entity"
+	fornecedor "github.com/eltonCasacio/controle-estoque/internal/infrastructure/fornecedor/model"
 )
 
 type FornecedorRepository struct {
@@ -16,7 +17,7 @@ func NovoFornecedorRepository(db *sql.DB) *FornecedorRepository {
 
 func (f *FornecedorRepository) Criar(fornecedor *e.Fornecedor) error {
 
-	stmt, err := f.DB.Prepare("insert into fornecedores(id, razao_social, nome_fantasia, cnpj, ie, id_pecas, ativo, id_endereco, id_contato) values(?,?,?,?,?,?,?,?,?)")
+	stmt, err := f.DB.Prepare("insert into fornecedores(id, razao_social, nome_fantasia, cnpj, ie, ativo) values(?,?,?,?,?,?)")
 	if err != nil {
 		return err
 	}
@@ -26,11 +27,8 @@ func (f *FornecedorRepository) Criar(fornecedor *e.Fornecedor) error {
 		fornecedor.GetRazaoSocial(),
 		fornecedor.GetNomeFantasia(),
 		fornecedor.GetCNPJ(),
-		fornecedor.GetCNPJ(),
-		fornecedor.GetIdPecas(),
+		fornecedor.GetIe(),
 		fornecedor.IsAtivo(),
-		1,
-		1,
 	)
 	if err != nil {
 		return err
@@ -45,9 +43,36 @@ func (f *FornecedorRepository) Criar(fornecedor *e.Fornecedor) error {
 // 	return &fornecedor, err
 // }
 
-// func (f *FornecedorRepository) BuscarTodos() ([]e.Fornecedor, error) {
-// 	return nil, nil
-// }
+func (f *FornecedorRepository) BuscarTodos() ([]e.Fornecedor, error) {
+	rows, err := f.DB.Query("select * from fornecedores")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var fornecedores []e.Fornecedor
+
+	for rows.Next() {
+		var fornecedor fornecedor.FornecedorModel
+		err := rows.Scan(&fornecedor.Id, &fornecedor.RazaoSocial, &fornecedor.NomeFantasia, &fornecedor.CNPJ, &fornecedor.Ie, &fornecedor.Ativo)
+		if err != nil {
+			return nil, err
+		}
+		var f e.Fornecedor
+		f.ChangeID(fornecedor.Id)
+		f.ChangeRazaoSocial(fornecedor.RazaoSocial)
+		f.ChangeNomeFantasia(fornecedor.NomeFantasia)
+		f.ChangeCNPJ(fornecedor.CNPJ)
+		f.ChangeIe(fornecedor.Ie)
+		f.Desativar()
+		if fornecedor.Ativo {
+			f.Ativar()
+		}
+
+		fornecedores = append(fornecedores, f)
+	}
+	return fornecedores, nil
+}
 
 // func (f *FornecedorRepository) Atualizar(fornecedor *e.Fornecedor) error {
 // 	return nil

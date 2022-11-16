@@ -3,7 +3,7 @@ package entity
 import (
 	"errors"
 
-	f "github.com/eltonCasacio/controle-estoque/internal/domain/fornecedor/value-object"
+	value_object "github.com/eltonCasacio/controle-estoque/internal/domain/fornecedor/value-object"
 	"github.com/eltonCasacio/controle-estoque/pkg/entity"
 )
 
@@ -13,16 +13,16 @@ type Fornecedor struct {
 	nomeFantasia string
 	cnpj         string
 	ie           string
-	endereco     f.Endereco
-	contatos     []f.Contato
+	endereco     value_object.Endereco
+	contatos     []value_object.Contato
 	idPecas      []string
 	ativo        bool
 }
 
 func NovoFornecedor(
 	nomeFantasia string,
-	endereco f.Endereco,
-	contatos []f.Contato,
+	endereco value_object.Endereco,
+	contatos []value_object.Contato,
 	idPecas []string,
 ) (*Fornecedor, error) {
 
@@ -59,7 +59,7 @@ func (f *Fornecedor) IsValid() error {
 	return nil
 }
 
-func (f *Fornecedor) AdicionarContato(contato f.Contato) error {
+func (f *Fornecedor) AdicionarContato(contato value_object.Contato) error {
 	if contato.ValidarContato() != nil {
 		return errors.New(CONTATO_OBRIGATORIO)
 	}
@@ -92,7 +92,7 @@ func (f *Fornecedor) AtualizarPecas(idPecas []string) error {
 	return nil
 }
 
-func (f *Fornecedor) AtualizarEndereco(endereco f.Endereco) error {
+func (f *Fornecedor) AtualizarEndereco(endereco value_object.Endereco) error {
 	err := endereco.ValidarEndereco()
 	if err != nil {
 		return errors.New(ENDERECO_OBRIGATORIO)
@@ -135,11 +135,11 @@ func (f *Fornecedor) GetIe() string {
 	return f.ie
 }
 
-func (f *Fornecedor) GetEndereco() f.Endereco {
+func (f *Fornecedor) GetEndereco() value_object.Endereco {
 	return f.endereco
 }
 
-func (f *Fornecedor) GetContatos() []f.Contato {
+func (f *Fornecedor) GetContatos() []value_object.Contato {
 	return f.contatos
 }
 
@@ -153,4 +153,38 @@ func (f *Fornecedor) IsAtivo() bool {
 
 func (f *Fornecedor) ChangeID(id entity.ID) {
 	f.id = id
+}
+
+func (f *Fornecedor) ChangeRazaoSocial(value string) error {
+	f.razaoSocial = value
+	return nil
+}
+
+func (f *Fornecedor) ChangeNomeFantasia(value string) error {
+	f.nomeFantasia = value
+	return nil
+}
+
+func (f *Fornecedor) ChangeCNPJ(cnpj string) error {
+	f.cnpj = cnpj
+	return nil
+}
+
+func (f *Fornecedor) ChangeIe(ie string) error {
+	f.ie = ie
+	return nil
+}
+
+func (f *Fornecedor) ChangeEndereco(endereco value_object.Endereco) error {
+	f.endereco = endereco
+	return nil
+}
+
+func (f *Fornecedor) ChangeContatos(contatos []value_object.Contato) error {
+	return nil
+}
+
+func (f *Fornecedor) ChangeIdPecas(ids []string) error {
+	f.idPecas = ids
+	return nil
 }
