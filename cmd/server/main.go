@@ -54,7 +54,7 @@ func main() {
 		r.Get("/{id}", usuarioHandler.BuscarUsuarioPorID)
 		r.Put("/{id}", usuarioHandler.Atualizar)
 		r.Delete("/{id}", usuarioHandler.Excluir)
-		r.Delete("/paginado", usuarioHandler.BuscarPaginado)
+		r.Get("/paginado", usuarioHandler.BuscarPaginado)
 	})
 
 	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
