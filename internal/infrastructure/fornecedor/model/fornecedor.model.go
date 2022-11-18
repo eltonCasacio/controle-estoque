@@ -1,4 +1,4 @@
-package fornecedor
+package model
 
 import "github.com/eltonCasacio/controle-estoque/pkg/entity"
 

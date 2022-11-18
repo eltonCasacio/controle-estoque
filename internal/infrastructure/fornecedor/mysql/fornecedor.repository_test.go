@@ -50,17 +50,62 @@ func (suite *FornecedorTestSuite) TestFornecedor_Criar() {
 	err := suite.Repository.Criar(&suite.Fornecedor)
 	assert.Nil(suite.T(), err)
 	defer suite.DB.Close()
-
-	stmt, _ := suite.DB.Prepare("delete from funcionarios")
+	stmt, _ := suite.DB.Prepare("delete from fornecedores")
 	stmt.Exec()
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_BuscarTodos() {
+	stmt, _ := suite.DB.Prepare("delete from fornecedores")
+	stmt.Exec()
+
 	suite.Repository.Criar(&suite.Fornecedor)
 	suite.Repository.Criar(&suite.Fornecedor)
 	defer suite.DB.Close()
 
 	fornecedores, err := suite.Repository.BuscarTodos()
 	assert.Nil(suite.T(), err)
-	assert.Greater(suite.T(), len(fornecedores), 0)
+	assert.Equal(suite.T(), len(fornecedores), 2)
+}
+
+func (suite *FornecedorTestSuite) TestFornecedor_BuscarPorID() {
+	stmt, _ := suite.DB.Prepare("delete from fornecedores")
+	stmt.Exec()
+
+	suite.Repository.Criar(&suite.Fornecedor)
+	defer suite.DB.Close()
+	f, err := suite.Repository.BuscarPorID(suite.Fornecedor.GetID().String())
+	assert.Nil(suite.T(), err)
+	assert.Equal(suite.T(), f.GetID(), suite.Fornecedor.GetID())
+}
+
+func (suite *FornecedorTestSuite) TestFornecedor_Atualizar() {
+	suite.Repository.Criar(&suite.Fornecedor)
+	defer suite.DB.Close()
+	f, err := suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
+	assert.Nil(suite.T(), err)
+	assert.NotNil(suite.T(), f)
+	assert.Equal(suite.T(), f.GetNomeFantasia(), suite.Fornecedor.GetNomeFantasia())
+
+	suite.Fornecedor.ChangeNomeFantasia("Nome fantasia alterado")
+	err = suite.Repository.Atualizar(&suite.Fornecedor)
+	assert.Nil(suite.T(), err)
+
+	f, err = suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
+	assert.Nil(suite.T(), err)
+	assert.NotNil(suite.T(), f)
+	assert.Equal(suite.T(), f.GetNomeFantasia(), "Nome fantasia alterado")
+}
+
+func (suite *FornecedorTestSuite) TestFornecedor_Excluir() {
+	suite.Repository.Criar(&suite.Fornecedor)
+	defer suite.DB.Close()
+	f, _ := suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
+	assert.Equal(suite.T(), f.GetID(), suite.Fornecedor.GetID())
+	assert.Equal(suite.T(), f.GetCNPJ(), suite.Fornecedor.GetCNPJ())
+
+	err := suite.Repository.Excluir(string(f.GetID().String()))
+	assert.Nil(suite.T(), err)
+
+	_, err = suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
+	assert.NotNil(suite.T(), err)
 }
