@@ -12,3 +12,4 @@ mysql -uroot -p safisa
 
 create table usuarios(id varchar(255), nome varchar(255), senha varchar(255), ativo bool)
 create table fornecedores(id varchar(255), razao_social varchar(255), nome_fantasia varchar(255), cnpj varchar(20), ie varchar(30), ativo bool)
+create table pecas(id varchar(255), id_fornecedor varchar(255), codigo varchar(255), descricao varchar(255), materiaprima varchar(255), url_desenho_tecnico varchar(255), url_foto varchar(255), descricao_tecnica varchar(255), massa varchar(255), quantidade varchar(255));

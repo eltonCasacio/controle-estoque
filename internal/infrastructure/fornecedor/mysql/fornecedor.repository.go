@@ -16,7 +16,6 @@ func NovoFornecedorRepository(db *sql.DB) *FornecedorRepository {
 }
 
 func (f *FornecedorRepository) Criar(fornecedor *e.Fornecedor) error {
-
 	stmt, err := f.DB.Prepare("insert into fornecedores(id, razao_social, nome_fantasia, cnpj, ie, ativo) values(?,?,?,?,?,?)")
 	if err != nil {
 		return err
@@ -33,7 +32,6 @@ func (f *FornecedorRepository) Criar(fornecedor *e.Fornecedor) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
