@@ -109,3 +109,16 @@ func (suite *FornecedorTestSuite) TestFornecedor_Excluir() {
 	_, err = suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
 	assert.NotNil(suite.T(), err)
 }
+
+func (suite *FornecedorTestSuite) TestFornecedor_BuscarPaginado() {
+	suite.Repository.Criar(&suite.Fornecedor)
+	defer suite.DB.Close()
+	suite.Repository.Criar(&suite.Fornecedor)
+	suite.Repository.Criar(&suite.Fornecedor)
+	suite.Repository.Criar(&suite.Fornecedor)
+
+	found, err := suite.Repository.BuscarPaginado(1, 3, "")
+	assert.Nil(suite.T(), err)
+	assert.NotNil(suite.T(), found)
+	assert.Equal(suite.T(), 3, len(found))
+}

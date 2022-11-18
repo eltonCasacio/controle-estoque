@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	usuario_entity "github.com/eltonCasacio/controle-estoque/internal/domain/usuario/entity"
-	model "github.com/eltonCasacio/controle-estoque/internal/infrastructure/usuario/model"
+	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/usuario/model"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 )

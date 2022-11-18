@@ -1,4 +1,4 @@
-package usuario
+package model
 
 import "github.com/eltonCasacio/controle-estoque/pkg/entity"
 
