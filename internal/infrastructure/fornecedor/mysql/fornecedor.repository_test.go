@@ -44,20 +44,18 @@ func (suite *FornecedorTestSuite) SetupTest() {
 	fornecedor.ChangeCNPJ("123245345")
 	fornecedor.ChangeIe("inscricao estadual")
 	suite.Fornecedor = *fornecedor
+
+	stmt, _ := suite.DB.Prepare("delete from fornecedores")
+	stmt.Exec()
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_Criar() {
 	err := suite.Repository.Criar(&suite.Fornecedor)
 	assert.Nil(suite.T(), err)
 	defer suite.DB.Close()
-	stmt, _ := suite.DB.Prepare("delete from fornecedores")
-	stmt.Exec()
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_BuscarTodos() {
-	stmt, _ := suite.DB.Prepare("delete from fornecedores")
-	stmt.Exec()
-
 	suite.Repository.Criar(&suite.Fornecedor)
 	suite.Repository.Criar(&suite.Fornecedor)
 	defer suite.DB.Close()
@@ -68,9 +66,6 @@ func (suite *FornecedorTestSuite) TestFornecedor_BuscarTodos() {
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_BuscarPorID() {
-	stmt, _ := suite.DB.Prepare("delete from fornecedores")
-	stmt.Exec()
-
 	suite.Repository.Criar(&suite.Fornecedor)
 	defer suite.DB.Close()
 	f, err := suite.Repository.BuscarPorID(suite.Fornecedor.GetID().String())

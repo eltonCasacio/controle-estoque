@@ -8,119 +8,118 @@ import (
 	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/usuario/model"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func Repository() (*sql.DB, *UsuarioRepository, error) {
-	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/safisa")
-	repo := NovoUsuarioRpository(db)
-
-	stmt, _ := db.Prepare("delete from usuarios")
-	stmt.Exec()
-	defer stmt.Close()
-	return db, repo, err
+type UsuarioTestSuite struct {
+	suite.Suite
+	DB         *sql.DB
+	Usuario    usuario_entity.Usuario
+	Repository *UsuarioRepository
 }
 
-func TestCriarUsuario(t *testing.T) {
-	db, repository, err := Repository()
-	assert.Nil(t, err)
-	usuario, _ := usuario_entity.NovoUsuario("roberto", "123")
-	err = repository.Criar(usuario)
-	assert.Nil(t, err)
+func TestSuite(t *testing.T) {
+	suite.Run(t, new(UsuarioTestSuite))
+}
 
-	stmt, err := db.Prepare("select id, nome from usuarios where id = ?")
+func (suite *UsuarioTestSuite) SetupTest() {
+	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/safisa")
 	if err != nil {
 		panic(err)
 	}
-	var usuarioModel model.UsuarioModel
-	err = stmt.QueryRow(usuario.GetID()).Scan(&usuarioModel.Id, &usuarioModel.Nome)
-	assert.Nil(t, err)
-	assert.Equal(t, usuario.GetID(), usuarioModel.Id)
-}
+	suite.DB = db
+	suite.Repository = NovoUsuarioRpository(db)
 
-func TestBuscarUsuarioPorId(t *testing.T) {
-	_, repository, _ := Repository()
 	usuario, _ := usuario_entity.NovoUsuario("roberto", "123")
-	err := repository.Criar(usuario)
-	assert.Nil(t, err)
-
-	usuarioModel, err := repository.BuscarPorID(usuario.GetID().String())
-	assert.Nil(t, err)
-	assert.NotNil(t, usuarioModel)
-	assert.Equal(t, usuario.GetID(), usuarioModel.GetID())
-	assert.Equal(t, usuario.GetNome(), usuarioModel.GetNome())
+	suite.Usuario = *usuario
+	stmt, _ := suite.DB.Prepare("delete from usuarios")
+	stmt.Exec()
 }
 
-func TestBuscarUsuario_QueNaoExiste(t *testing.T) {
-	db, _, err := Repository()
-	assert.Nil(t, err)
-	stmt, err := db.Prepare("select * from usuarios where id = ?")
+func (suite *UsuarioTestSuite) TestCriarUsuario() {
+	defer suite.DB.Close()
+	err := suite.Repository.Criar(&suite.Usuario)
+	assert.Nil(suite.T(), err)
+
+	stmt, err := suite.DB.Prepare("select id, nome from usuarios where id = ?")
+	if err != nil {
+		panic(err)
+	}
+
+	var usuarioModel model.UsuarioModel
+	err = stmt.QueryRow(suite.Usuario.GetID()).Scan(&usuarioModel.Id, &usuarioModel.Nome)
+	assert.Nil(suite.T(), err)
+	assert.Equal(suite.T(), suite.Usuario.GetID(), usuarioModel.Id)
+}
+
+func (suite *UsuarioTestSuite) TestBuscarUsuarioPorId() {
+	defer suite.DB.Close()
+	err := suite.Repository.Criar(&suite.Usuario)
+	assert.Nil(suite.T(), err)
+
+	usuarioModel, err := suite.Repository.BuscarPorID(suite.Usuario.GetID().String())
+	assert.Nil(suite.T(), err)
+	assert.NotNil(suite.T(), usuarioModel)
+	assert.Equal(suite.T(), suite.Usuario.GetID(), usuarioModel.GetID())
+	assert.Equal(suite.T(), suite.Usuario.GetNome(), usuarioModel.GetNome())
+}
+
+func (suite *UsuarioTestSuite) TestBuscarUsuario_QueNaoExiste() {
+	defer suite.DB.Close()
+	stmt, err := suite.DB.Prepare("select * from usuarios where id = ?")
 	if err != nil {
 		panic(err)
 	}
 	var usuarioModel model.UsuarioModel
 	err = stmt.QueryRow("836gfe").Scan(&usuarioModel.Id, &usuarioModel.Nome, &usuarioModel.Senha, &usuarioModel.Ativo)
-	assert.NotNil(t, err)
+	assert.NotNil(suite.T(), err)
 }
 
-func TestBuscarTodos(t *testing.T) {
-	_, repository, err := Repository()
-	assert.Nil(t, err)
+func (suite *UsuarioTestSuite) TestBuscarTodos() {
+	defer suite.DB.Close()
+	suite.Repository.Criar(&suite.Usuario)
+	suite.Repository.Criar(&suite.Usuario)
 
-	usuario, _ := usuario_entity.NovoUsuario("Elton", "1223")
-	_ = repository.Criar(usuario)
-	usuario, _ = usuario_entity.NovoUsuario("Casacio", "12236")
-	_ = repository.Criar(usuario)
-
-	usuarios, err := repository.BuscarTodos()
-	assert.Nil(t, err)
-	assert.Equal(t, 2, len(usuarios))
+	usuarios, err := suite.Repository.BuscarTodos()
+	assert.Nil(suite.T(), err)
+	assert.Equal(suite.T(), 2, len(usuarios))
 }
 
-func TestAtualizarUsuario(t *testing.T) {
-	_, repository, err := Repository()
-	assert.Nil(t, err)
-	usuario, _ := usuario_entity.NovoUsuario("Elton", "123")
-	_ = repository.Criar(usuario)
+func (suite *UsuarioTestSuite) TestAtualizarUsuario() {
+	defer suite.DB.Close()
+	suite.Repository.Criar(&suite.Usuario)
 
-	uEncontrado, _ := repository.BuscarPorID(usuario.GetID().String())
+	uEncontrado, _ := suite.Repository.BuscarPorID(suite.Usuario.GetID().String())
 	uEncontrado.ChangeNome("Casacio")
 
-	repository.Atualizar(uEncontrado)
-	usuarioAtualizado, err := repository.BuscarPorID(usuario.GetID().String())
-	assert.Nil(t, err)
-	assert.NotNil(t, usuarioAtualizado)
-	assert.Equal(t, "Casacio", usuarioAtualizado.GetNome())
+	suite.Repository.Atualizar(uEncontrado)
+	usuarioAtualizado, err := suite.Repository.BuscarPorID(suite.Usuario.GetID().String())
+	assert.Nil(suite.T(), err)
+	assert.NotNil(suite.T(), usuarioAtualizado)
+	assert.Equal(suite.T(), "Casacio", usuarioAtualizado.GetNome())
 }
 
-func TestExcluirUsuario(t *testing.T) {
-	_, repository, _ := Repository()
-	usuario, _ := usuario_entity.NovoUsuario("delete_user", "123")
-	_ = repository.Criar(usuario)
+func (suite *UsuarioTestSuite) TestExcluirUsuario() {
+	defer suite.DB.Close()
+	suite.Repository.Criar(&suite.Usuario)
 
-	err := repository.Excluir(usuario.GetID().String())
-	assert.Nil(t, err)
+	err := suite.Repository.Excluir(suite.Usuario.GetID().String())
+	assert.Nil(suite.T(), err)
 
-	uEncontrado, err := repository.BuscarPorID(usuario.GetID().String())
-	assert.NotNil(t, err)
-	assert.Nil(t, uEncontrado)
+	uEncontrado, err := suite.Repository.BuscarPorID(suite.Usuario.GetID().String())
+	assert.NotNil(suite.T(), err)
+	assert.Nil(suite.T(), uEncontrado)
 }
 
-func TestBuscarPaginado(t *testing.T) {
-	_, repository, _ := Repository()
-	usuario1, _ := usuario_entity.NovoUsuario("usuario 1", "123")
-	_ = repository.Criar(usuario1)
+func (suite *UsuarioTestSuite) TestBuscarPaginado() {
+	defer suite.DB.Close()
+	suite.Repository.Criar(&suite.Usuario)
+	suite.Repository.Criar(&suite.Usuario)
+	suite.Repository.Criar(&suite.Usuario)
+	suite.Repository.Criar(&suite.Usuario)
 
-	usuario2, _ := usuario_entity.NovoUsuario("usuario 2", "123")
-	_ = repository.Criar(usuario2)
-
-	usuario3, _ := usuario_entity.NovoUsuario("usuario 3", "123")
-	_ = repository.Criar(usuario3)
-
-	usuario4, _ := usuario_entity.NovoUsuario("usuario 4", "123")
-	_ = repository.Criar(usuario4)
-
-	usuariosEncontrado, err := repository.BuscarPaginado("1", "3", "")
-	assert.Nil(t, err)
-	assert.NotNil(t, usuariosEncontrado)
-	assert.Equal(t, 3, len(usuariosEncontrado))
+	usuariosEncontrado, err := suite.Repository.BuscarPaginado("1", "3", "")
+	assert.Nil(suite.T(), err)
+	assert.NotNil(suite.T(), usuariosEncontrado)
+	assert.Equal(suite.T(), 3, len(usuariosEncontrado))
 }
