@@ -6,7 +6,6 @@ import (
 
 type Peca struct {
 	id                entity.ID
-	idFornecedor      entity.ID
 	codigo            string
 	descricao         string
 	materiaPrima      string
@@ -18,7 +17,6 @@ type Peca struct {
 }
 
 func NovaPeca(
-	idFornecedor entity.ID,
 	codigo,
 	descricao,
 	materiaPrima,
@@ -30,7 +28,6 @@ func NovaPeca(
 ) (*Peca, error) {
 	p := &Peca{
 		id:                entity.NewID(),
-		idFornecedor:      idFornecedor,
 		codigo:            codigo,
 		descricao:         descricao,
 		materiaPrima:      materiaPrima,
@@ -50,10 +47,6 @@ func NovaPeca(
 
 func (p *Peca) GetID() entity.ID {
 	return p.id
-}
-
-func (p *Peca) GetIDFornecedor() entity.ID {
-	return p.idFornecedor
 }
 
 func (p *Peca) GetCodigo() string {
@@ -94,10 +87,6 @@ func (p *Peca) IsValid() error {
 
 func (p *Peca) ChangeID(id entity.ID) {
 	p.id = id
-}
-
-func (p *Peca) ChangeIDFornecedor(idFornecedor entity.ID) {
-	p.idFornecedor = idFornecedor
 }
 
 func (p *Peca) ChangeCodigo(codigo string) {

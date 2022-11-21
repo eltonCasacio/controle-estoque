@@ -2,6 +2,7 @@ package mysql_repository
 
 import (
 	"database/sql"
+	"errors"
 
 	e "github.com/eltonCasacio/controle-estoque/internal/domain/fornecedor/entity"
 	"github.com/eltonCasacio/controle-estoque/internal/infrastructure/fornecedor/model"
@@ -16,13 +17,23 @@ func NovoFornecedorRepository(db *sql.DB) *FornecedorRepository {
 }
 
 func (f *FornecedorRepository) Criar(fornecedor *e.Fornecedor) error {
+	stmt, _ := f.DB.Prepare("select * from fornecedores where id = ?")
+	defer stmt.Close()
+
+	var fornecedorModel model.FornecedorModel
+	stmt.QueryRow(fornecedor.GetID()).Scan(&fornecedorModel.Id, &fornecedorModel.RazaoSocial, &fornecedorModel.NomeFantasia, &fornecedorModel.CNPJ, &fornecedorModel.Ie, &fornecedorModel.Ativo)
+
+	if fornecedorModel.Id == fornecedor.GetID() {
+		return errors.New("já existe um fornecedor com esse ID")
+	}
+
 	tx, err := f.DB.Begin()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	stmt, err := tx.Prepare("insert into fornecedores(id, razao_social, nome_fantasia, cnpj, ie, ativo) values(?,?,?,?,?,?)")
+	stmt, err = tx.Prepare("insert into fornecedores(id, razao_social, nome_fantasia, cnpj, ie, ativo) values(?,?,?,?,?,?)")
 	if err != nil {
 		return err
 	}

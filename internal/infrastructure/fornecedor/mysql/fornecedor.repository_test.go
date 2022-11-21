@@ -56,13 +56,15 @@ func (suite *FornecedorTestSuite) TestFornecedor_Criar() {
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_BuscarTodos() {
-	suite.Repository.Criar(&suite.Fornecedor)
-	suite.Repository.Criar(&suite.Fornecedor)
+	fornecedor, _ := f_entity.NovoFornecedor("nome fantasia", suite.Endereco, suite.Contatos, []string{"1", "2"})
+	suite.Repository.Criar(fornecedor)
+	fornecedor, _ = f_entity.NovoFornecedor("nome fantasia 2", suite.Endereco, suite.Contatos, []string{"1", "2", "3"})
+	suite.Repository.Criar(fornecedor)
 	defer suite.DB.Close()
 
 	fornecedores, err := suite.Repository.BuscarTodos()
 	assert.Nil(suite.T(), err)
-	assert.Equal(suite.T(), len(fornecedores), 2)
+	assert.Equal(suite.T(), 2, len(fornecedores))
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_BuscarPorID() {
@@ -76,18 +78,11 @@ func (suite *FornecedorTestSuite) TestFornecedor_BuscarPorID() {
 func (suite *FornecedorTestSuite) TestFornecedor_Atualizar() {
 	suite.Repository.Criar(&suite.Fornecedor)
 	defer suite.DB.Close()
-	f, err := suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
-	assert.Nil(suite.T(), err)
-	assert.NotNil(suite.T(), f)
-	assert.Equal(suite.T(), f.GetNomeFantasia(), suite.Fornecedor.GetNomeFantasia())
-
+	suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
 	suite.Fornecedor.ChangeNomeFantasia("Nome fantasia alterado")
-	err = suite.Repository.Atualizar(&suite.Fornecedor)
+	err := suite.Repository.Atualizar(&suite.Fornecedor)
 	assert.Nil(suite.T(), err)
-
-	f, err = suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
-	assert.Nil(suite.T(), err)
-	assert.NotNil(suite.T(), f)
+	f, _ := suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
 	assert.Equal(suite.T(), f.GetNomeFantasia(), "Nome fantasia alterado")
 }
 
@@ -95,24 +90,27 @@ func (suite *FornecedorTestSuite) TestFornecedor_Excluir() {
 	suite.Repository.Criar(&suite.Fornecedor)
 	defer suite.DB.Close()
 	f, _ := suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
-	assert.Equal(suite.T(), f.GetID(), suite.Fornecedor.GetID())
-	assert.Equal(suite.T(), f.GetCNPJ(), suite.Fornecedor.GetCNPJ())
-
 	err := suite.Repository.Excluir(string(f.GetID().String()))
 	assert.Nil(suite.T(), err)
-
 	_, err = suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
 	assert.NotNil(suite.T(), err)
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_BuscarPaginado() {
-	suite.Repository.Criar(&suite.Fornecedor)
 	defer suite.DB.Close()
-	suite.Repository.Criar(&suite.Fornecedor)
-	suite.Repository.Criar(&suite.Fornecedor)
-	suite.Repository.Criar(&suite.Fornecedor)
+	fornecedor, _ := f_entity.NovoFornecedor("nome fantasia", suite.Endereco, suite.Contatos, []string{"1", "2"})
+	suite.Repository.Criar(fornecedor)
 
-	found, err := suite.Repository.BuscarPaginado(1, 3, "")
+	fornecedor, _ = f_entity.NovoFornecedor("nome fantasia", suite.Endereco, suite.Contatos, []string{"1"})
+	suite.Repository.Criar(fornecedor)
+
+	fornecedor, _ = f_entity.NovoFornecedor("nome fantasia", suite.Endereco, suite.Contatos, []string{"1"})
+	suite.Repository.Criar(fornecedor)
+
+	fornecedor, _ = f_entity.NovoFornecedor("nome fantasia", suite.Endereco, suite.Contatos, []string{"1"})
+	suite.Repository.Criar(fornecedor)
+
+	found, err := suite.Repository.BuscarPaginado(0, 3, "")
 	assert.Nil(suite.T(), err)
 	assert.NotNil(suite.T(), found)
 	assert.Equal(suite.T(), 3, len(found))
