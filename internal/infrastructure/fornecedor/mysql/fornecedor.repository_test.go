@@ -49,6 +49,15 @@ func (suite *FornecedorTestSuite) SetupTest() {
 	stmt.Exec()
 }
 
+func (suite *FornecedorTestSuite) TestFornecedor_CriarJaExiste() {
+	defer suite.DB.Close()
+	err := suite.Repository.Criar(&suite.Fornecedor)
+	assert.Nil(suite.T(), err)
+	err = suite.Repository.Criar(&suite.Fornecedor)
+	assert.NotNil(suite.T(), err)
+	assert.Equal(suite.T(), "já existe um fornecedor com esse ID", err.Error())
+}
+
 func (suite *FornecedorTestSuite) TestFornecedor_Criar() {
 	err := suite.Repository.Criar(&suite.Fornecedor)
 	assert.Nil(suite.T(), err)

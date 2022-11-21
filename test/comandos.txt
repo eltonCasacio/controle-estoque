@@ -47,7 +47,7 @@ create table enderecos(
 );
 
 create table contatos(
-    id int unsigned not null auto_increment
+    id int unsigned not null auto_increment,
     fornecedor_id varchar(255),
     email varchar(100), 
     celular varchar(20), 
