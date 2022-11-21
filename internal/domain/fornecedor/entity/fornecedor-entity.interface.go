@@ -13,7 +13,6 @@ type FornecedorInterface interface {
 	GetIe() string
 	GetEndereco() value_object.Endereco
 	GetContatos() []value_object.Contato
-	GetIdPecas() []string
 	IsValid() bool
 	IsAtivo() bool
 	Desativar()
@@ -25,5 +24,4 @@ type FornecedorInterface interface {
 	ChangeIe() string
 	ChangeEndereco() value_object.Endereco
 	ChangeContatos() []value_object.Contato
-	ChangeIdPecas() []string
 }

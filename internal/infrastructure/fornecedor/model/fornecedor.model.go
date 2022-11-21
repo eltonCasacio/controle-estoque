@@ -10,15 +10,6 @@ type FornecedorModel struct {
 	Ie           string
 	Ativo        bool
 }
-
-type Contato struct {
-	Telefone     string
-	Email        string
-	Celular      string
-	Nome         string
-	FornecedorID entity.ID
-}
-
 type Endereco struct {
 	Cidade       string
 	UF           string
@@ -27,5 +18,12 @@ type Endereco struct {
 	Bairro       string
 	CEP          int
 	Numero       string
+	FornecedorID entity.ID
+}
+type Contato struct {
+	Telefone     string
+	Email        string
+	Celular      string
+	Nome         string
 	FornecedorID entity.ID
 }

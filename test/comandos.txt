@@ -10,6 +10,9 @@ go test -bench=. -run=^# -count=10 -benchtime=5s
 ****************** BANCO DE DADOS MYSQL ******************
 mysql -uroot -p safisa 
 
-create table usuarios(id varchar(255), nome varchar(255), senha varchar(255), ativo bool)
-create table fornecedores(id varchar(255), razao_social varchar(255), nome_fantasia varchar(255), cnpj varchar(20), ie varchar(30), ativo bool)
+create table usuarios(id varchar(255), nome varchar(255), senha varchar(255), ativo bool);
+create table fornecedores(id varchar(255), razao_social varchar(255), nome_fantasia varchar(255), cnpj varchar(20), ie varchar(30), ativo bool);
+create table fornecedores_pecas(id_fornecedor varchar(255), id_peca varchar(255));
+create table enderecos(uf varchar(255), rua varchar(255), complemento varchar(255), bairro varchar(255), cep varchar(15), numero varchar(10), fornecedor_id varchar(255));
+create table contatos(email varchar(100), celular varchar(20), nome varchar(255), fornecedor_id varchar(255));
 create table pecas(id varchar(255), id_fornecedor varchar(255), codigo varchar(255), descricao varchar(255), materiaprima varchar(255), url_desenho_tecnico varchar(255), url_foto varchar(255), descricao_tecnica varchar(255), massa varchar(255), quantidade varchar(255));

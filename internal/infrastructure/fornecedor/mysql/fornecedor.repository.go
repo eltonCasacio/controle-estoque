@@ -16,11 +16,16 @@ func NovoFornecedorRepository(db *sql.DB) *FornecedorRepository {
 }
 
 func (f *FornecedorRepository) Criar(fornecedor *e.Fornecedor) error {
-	stmt, err := f.DB.Prepare("insert into fornecedores(id, razao_social, nome_fantasia, cnpj, ie, ativo) values(?,?,?,?,?,?)")
+	tx, err := f.DB.Begin()
 	if err != nil {
 		return err
 	}
+	defer tx.Rollback()
 
+	stmt, err := tx.Prepare("insert into fornecedores(id, razao_social, nome_fantasia, cnpj, ie, ativo) values(?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
 	_, err = stmt.Exec(
 		fornecedor.GetID(),
 		fornecedor.GetRazaoSocial(),
@@ -30,6 +35,56 @@ func (f *FornecedorRepository) Criar(fornecedor *e.Fornecedor) error {
 		fornecedor.IsAtivo(),
 	)
 	if err != nil {
+		return err
+	}
+
+	stmt, err = tx.Prepare("insert into fornecedores_pecas(id_fornecedor, id_peca) values(?,?)")
+	if err != nil {
+		return err
+	}
+
+	for _, v := range fornecedor.GetIdPecas() {
+		_, err = stmt.Exec(fornecedor.GetID(), v)
+		if err != nil {
+			return err
+		}
+	}
+
+	stmt, err = tx.Prepare("insert into enderecos(uf, rua, complemento, bairro, cep, numero, fornecedor_id) values(?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(
+		fornecedor.GetEndereco().UF,
+		fornecedor.GetEndereco().Rua,
+		fornecedor.GetEndereco().Complemento,
+		fornecedor.GetEndereco().Bairro,
+		fornecedor.GetEndereco().CEP,
+		fornecedor.GetEndereco().Numero,
+		fornecedor.GetID(),
+	)
+	if err != nil {
+		return err
+	}
+
+	stmt, err = tx.Prepare("insert into contatos(email, celular, nome, fornecedor_id) values(?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	for _, contato := range fornecedor.GetContatos() {
+		_, err = stmt.Exec(
+			contato.Email,
+			contato.Celular,
+			contato.Nome,
+			fornecedor.GetID(),
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
 		return err
 	}
 	return nil
