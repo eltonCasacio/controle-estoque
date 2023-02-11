@@ -1,27 +1,3 @@
-go test -coverprofile=coverage.out  => gera um arquivo e mostra no terminal a cobertura de test
-go tool cover -html=coverage.out    => abre no browser o codigo coberto e o arquivo .out deve existir
-go test -bench=.
-go test -bench=. -run=^#
-go test -bench=. -run=^# -benchmem
-go test -bench=. -run=^# -count=10 -benchtime=5s
-
-
-
-****************** BANCO DE DADOS MYSQL ******************
-mysql -uroot -p safisa 
-
-
----------- MIGRATIONS ----------
-
-criar arquivos UP e DOWN: migrate create -ext=sql -dir=sql/migrations -seq init
-executa a migrations UP/DOWN:  migrate -path=sql/migrations -database "mysql://root:root@tcp(localhost:3306)/safisa" -verbose <up OU down>
-
-
-
-
-
-
-
 create table usuarios(
     id varchar(255),
     nome varchar(255),
@@ -41,7 +17,7 @@ create table fornecedores(
 );
 
 create table fornecedores_pecas(
-    id_fornecedor varchar(255),
+    fornecedor_id varchar(255),
     id_peca varchar(255)
 );
 
@@ -55,7 +31,7 @@ create table enderecos(
     cep varchar(15), 
     numero varchar(10), 
     PRIMARY KEY (id),
-    CONSTRAINT fk_enderecos_fornecedores FOREIGN KEY (fornecedor_id) REFERENCES fornecedores (id)
+    CONSTRAINT fk_enderecos_fornecedores FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id)
 );
 
 create table contatos(
@@ -65,12 +41,12 @@ create table contatos(
     celular varchar(20), 
     nome varchar(255), 
     PRIMARY KEY (id),
-    CONSTRAINT fk_contatos_fornecedores FOREIGN KEY (fornecedor_id) REFERENCES fornecedores (id)
+    CONSTRAINT fk_contatos_fornecedores FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id)
 );
 
 create table pecas(
     id varchar(255), 
-    id_fornecedor varchar(255), 
+    fornecedor_id varchar(255), 
     codigo varchar(255), 
     descricao varchar(255), 
     materiaprima varchar(255), 
@@ -80,7 +56,5 @@ create table pecas(
     massa varchar(255), 
     quantidade varchar(255),
     PRIMARY KEY (id),
-    CONSTRAINT fk_pecas_fornecedores FOREIGN KEY (fornecedor_id) REFERENCES fornecedores (id)
+    CONSTRAINT fk_pecas_fornecedores FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id)
 );
-
-SELECT * FROM fornecedores JOIN enderecos JOIN contatos ON fornecedores.id = enderecos.fornecedor_id AND fornecedores.id = contatos.fornecedor_id;

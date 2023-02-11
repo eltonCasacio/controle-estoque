@@ -14,37 +14,21 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-// @title           API Controle de estoque
-// @version         1.0
-// @description     API para controle de estoque de peças
-// @termsOfService  http://swagger.io/terms/
-// @contact.name   	Elton Casacio & Wevyrton Antero
-// @contact.url    	https://www.instagram.com/elton_casacio/
-// @contact.email  	eltoncasacio@hotmail.com.br
-// @license.name   	C3R Innovation
-// @license.url    	https://c3rinnovation.com
-// @host      		localhost:8000
-// @BasePath  /
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name Authorization
 func main() {
 	configs, err := configs.LoadConfig(".env")
 	if err != nil {
 		panic(err)
 	}
-
-	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/safisa")
-	if err != nil {
-		panic(err)
-	}
-
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.WithValue("jwt", configs.TokenAuth))
 	r.Use(middleware.WithValue("jwtExperiesIn", configs.JwtExperesIn))
 
+	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/safisa")
+	if err != nil {
+		panic(err)
+	}
 	usuarioDB := usuario_repository.NovoUsuarioRpository(db)
 	usuarioHandler := handlers.NovoUsuarioHandler(usuarioDB)
 

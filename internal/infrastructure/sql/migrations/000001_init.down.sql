@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS pecas;
+DROP TABLE IF EXISTS contatos;
+DROP TABLE IF EXISTS enderecos;
+DROP TABLE IF EXISTS fornecedores_pecas;
+DROP TABLE IF EXISTS fornecedores;
+DROP TABLE IF EXISTS usuarios;

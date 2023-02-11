@@ -20,6 +20,39 @@ type FornecedorTestSuite struct {
 	Repository *FornecedorRepository
 }
 
+func (suite *FornecedorTestSuite) LimparBD() {
+	tx, _ := suite.DB.Begin()
+	defer tx.Rollback()
+
+	stmt, _ := tx.Prepare("DELETE FROM contatos")
+	_, err := stmt.Exec()
+	if err != nil {
+		assert.Error(suite.T(), err, "Erro ao deletar registros da tabela fornecedores")
+	}
+
+	stmt, _ = tx.Prepare("DELETE FROM enderecos")
+	_, err = stmt.Exec()
+	if err != nil {
+		assert.Error(suite.T(), err, "Erro ao deletar registros da tabela fornecedores")
+	}
+
+	stmt, _ = tx.Prepare("DELETE FROM fornecedores_pecas")
+	_, err = stmt.Exec()
+	if err != nil {
+		assert.Error(suite.T(), err, "Erro ao deletar registros da tabela fornecedores")
+	}
+
+	stmt, _ = tx.Prepare("DELETE FROM fornecedores")
+	_, err = stmt.Exec()
+	if err != nil {
+		assert.Error(suite.T(), err, "Erro ao deletar registros da tabela fornecedores")
+	}
+
+	if err = tx.Commit(); err != nil {
+		assert.Error(suite.T(), err, "COMMIT Error")
+	}
+}
+
 func TestSuite(t *testing.T) {
 	suite.Run(t, new(FornecedorTestSuite))
 }
@@ -44,9 +77,13 @@ func (suite *FornecedorTestSuite) SetupTest() {
 	fornecedor.ChangeCNPJ("123245345")
 	fornecedor.ChangeIe("inscricao estadual")
 	suite.Fornecedor = *fornecedor
+	suite.LimparBD()
+}
 
-	stmt, _ := suite.DB.Prepare("delete from fornecedores")
-	stmt.Exec()
+func (suite *FornecedorTestSuite) TestFornecedor_Criar() {
+	err := suite.Repository.Criar(&suite.Fornecedor)
+	assert.Nil(suite.T(), err)
+	defer suite.DB.Close()
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_CriarJaExiste() {
@@ -58,18 +95,12 @@ func (suite *FornecedorTestSuite) TestFornecedor_CriarJaExiste() {
 	assert.Equal(suite.T(), "já existe um fornecedor com esse ID", err.Error())
 }
 
-func (suite *FornecedorTestSuite) TestFornecedor_Criar() {
-	err := suite.Repository.Criar(&suite.Fornecedor)
-	assert.Nil(suite.T(), err)
-	defer suite.DB.Close()
-}
-
 func (suite *FornecedorTestSuite) TestFornecedor_BuscarTodos() {
+	defer suite.DB.Close()
 	fornecedor, _ := f_entity.NovoFornecedor("nome fantasia", suite.Endereco, suite.Contatos, []string{"1", "2"})
 	suite.Repository.Criar(fornecedor)
 	fornecedor, _ = f_entity.NovoFornecedor("nome fantasia 2", suite.Endereco, suite.Contatos, []string{"1", "2", "3"})
 	suite.Repository.Criar(fornecedor)
-	defer suite.DB.Close()
 
 	fornecedores, err := suite.Repository.BuscarTodos()
 	assert.Nil(suite.T(), err)
@@ -96,9 +127,10 @@ func (suite *FornecedorTestSuite) TestFornecedor_Atualizar() {
 }
 
 func (suite *FornecedorTestSuite) TestFornecedor_Excluir() {
-	suite.Repository.Criar(&suite.Fornecedor)
 	defer suite.DB.Close()
+	suite.Repository.Criar(&suite.Fornecedor)
 	f, _ := suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))
+	assert.Equal(suite.T(), f.GetID(), suite.Fornecedor.GetID())
 	err := suite.Repository.Excluir(string(f.GetID().String()))
 	assert.Nil(suite.T(), err)
 	_, err = suite.Repository.BuscarPorID(string(suite.Fornecedor.GetID().String()))

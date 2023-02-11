@@ -173,15 +173,40 @@ func (f *FornecedorRepository) Atualizar(fornecedor *e.Fornecedor) error {
 }
 
 func (f *FornecedorRepository) Excluir(id string) error {
-	stmt, err := f.DB.Prepare("delete from fornecedores where id = ?")
+	tx, err := f.DB.Begin()
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer tx.Rollback()
+
+	stmt, _ := tx.Prepare("DELETE FROM contatos where contatos.fornecedor_id = ?")
 	_, err = stmt.Exec(id)
 	if err != nil {
 		return err
 	}
+
+	stmt, _ = tx.Prepare("DELETE FROM enderecos where enderecos.fornecedor_id = ?")
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	stmt, _ = tx.Prepare("DELETE FROM fornecedores_pecas where fornecedores_pecas.fornecedor_id = ?")
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	stmt, _ = tx.Prepare("DELETE FROM fornecedores where fornecedores.id = ?")
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -6,6 +6,7 @@ import (
 )
 
 type FornecedorInterface interface {
+	IsValid() bool
 	GetID() entity.ID
 	GetRazaoSocial() string
 	GetNomeFantasia() string
@@ -13,7 +14,6 @@ type FornecedorInterface interface {
 	GetIe() string
 	GetEndereco() value_object.Endereco
 	GetContatos() []value_object.Contato
-	IsValid() bool
 	IsAtivo() bool
 	Desativar()
 	Ativar()
